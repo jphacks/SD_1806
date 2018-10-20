@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "moduleResolution": "node",
+    "allowJs": false,
+    "noEmit": true,
+    "strict": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "allowUnusedLabels": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "noFallthroughCasesInSwitch": true,
+    "jsx": "react",
+    "lib": ["esnext"]
+  },
+  "include": ["src"]
+}
