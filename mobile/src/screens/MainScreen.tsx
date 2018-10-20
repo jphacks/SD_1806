@@ -24,10 +24,12 @@ export default class MainScreen extends React.Component<Props, State> {
 
   async componentDidMount() {
     try {
-      const amount = await ApiClient.getAmount()
-      this.setState({
-        amount,
-      })
+      setInterval(async () => {
+        const amount = await ApiClient.getAmount()
+        this.setState({
+          amount,
+        })
+      }, 1000)
     } catch (err) {
       Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
     }
