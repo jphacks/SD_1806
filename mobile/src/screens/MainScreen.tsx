@@ -28,7 +28,8 @@ export default class MainScreen extends React.Component<Props, State> {
               color: "#5cb85c",
               alignSelf: "center",
               fontSize: 60,
-              fontWeight: "bold"
+              fontWeight: "bold",
+              marginTop: 30
             }}
           >
             {"燃えるゴミ"}
@@ -50,7 +51,7 @@ export default class MainScreen extends React.Component<Props, State> {
               alignSelf: "center",
               fontSize: 60,
               fontWeight: "bold",
-              marginTop: 250
+              marginTop: 280
             }}
           >
             {this.state.amount + "%"}
@@ -63,7 +64,7 @@ export default class MainScreen extends React.Component<Props, State> {
             }}
             success
           >
-            <Icon name="settings" />
+            <Icon name="settings" style={{ fontSize: 50, marginTop: 25 }} />
           </Button>
         </Content>
       </Container>
