@@ -5,4 +5,5 @@ lib/
 pip-selfcheck.json
 collection.json
 config.json
+fcmconfig.json
 *.cfg
