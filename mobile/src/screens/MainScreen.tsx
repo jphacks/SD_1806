@@ -1,22 +1,32 @@
-import React from "react"
-import { Container, Content, Button, Text } from "native-base"
+import React from "react";
+import { Container, Content, Button, Icon } from "native-base";
+import { NavigationScreenProp } from "react-navigation";
 
 interface State {}
-interface Props {}
+interface Props {
+  navigation: NavigationScreenProp<any>;
+}
 
-export default class MainScreen extends React.Component<State, Props> {
+export default class MainScreen extends React.Component<Props, State> {
   constructor(props: Props) {
-    super(props)
+    super(props);
   }
+
   render() {
     return (
       <Container>
         <Content>
-          <Button>
-            <Text>Click Me!</Text>
+          <Button
+            transparent
+            large
+            onPress={() => {
+              this.props.navigation.navigate("Setting");
+            }}
+          >
+            <Icon name="settings" />
           </Button>
         </Content>
       </Container>
-    )
+    );
   }
 }
