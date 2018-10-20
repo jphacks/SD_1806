@@ -1,10 +1,12 @@
 import React from "react";
-import { Image } from "react-native";
+import { Image, Alert } from "react-native";
 import { Container, Content, Button, Icon, Text } from "native-base";
 import { NavigationScreenProp } from "react-navigation";
+import ApiClient from "../libs/ApiClient";
 
 interface State {
   amount: number;
+  name: string;
 }
 interface Props {
   navigation: NavigationScreenProp<any>;
@@ -15,8 +17,20 @@ export default class MainScreen extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      amount: 0
+      amount: 0,
+      name: "燃えるごみ"
     };
+  }
+
+  async componentDidMount() {
+    try {
+      const amount = await ApiClient.getAmount();
+      this.setState({
+        amount
+      });
+    } catch (err) {
+      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。");
+    }
   }
 
   render() {
@@ -55,7 +69,7 @@ export default class MainScreen extends React.Component<Props, State> {
               marginTop: 30
             }}
           >
-            {"燃えるゴミ"}
+            {this.state.name}
           </Text>
           <Image
             source={img_dustbox}
@@ -69,7 +83,7 @@ export default class MainScreen extends React.Component<Props, State> {
           />
           <Text
             style={{
-              color: "#5cb85c",
+              color: "#addbad",
               position: "absolute",
               alignSelf: "center",
               fontSize: 60,
@@ -77,7 +91,7 @@ export default class MainScreen extends React.Component<Props, State> {
               marginTop: 290
             }}
           >
-            {this.state.amount + "%"}
+            {this.state.amount * 25 + "%"}
           </Text>
           <Button
             transparent
@@ -86,7 +100,7 @@ export default class MainScreen extends React.Component<Props, State> {
               this.props.navigation.navigate("Setting");
             }}
             success
-            style={{ marginTop: 20, alignSelf: "center", height: 100 }}
+            style={{ marginTop: 40, alignSelf: "center", height: 100 }}
           >
             <Icon name="settings" style={{ fontSize: 100 }} />
           </Button>
