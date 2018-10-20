@@ -2,7 +2,7 @@ import React from "react";
 import { Image } from "react-native";
 import { Container, Content, Button, Icon, Text } from "native-base";
 import { NavigationScreenProp } from "react-navigation";
-import axios from 'axios'
+import { example } from "../APIAccess"
 
 interface State {
   amount: number;
@@ -21,18 +21,7 @@ export default class MainScreen extends React.Component<Props, State> {
       name: "家庭ゴミ"
     };
 
-    // 同一ネットワークに接続し，APIサーバの立っているPC(orデバイス)のIPにアクセスする
-    axios.get("http://10.32.228.233:5000/")
-      .then(res => {
-        console.log(res)
-        this.setState({
-          amount: 100,
-          name: "プラごみ"
-        })
-      })
-      .catch(error => {
-        console.log('error');
-      });
+    example(this);
   }
 
   render() {
