@@ -16,10 +16,11 @@ $ python server.py
 |/amount|GET|なし|現在のゴミの量を取得．0~4の5段階|
 |/config|GET|なし|現在の設定ファイル(*1)の状態を取得する|
 |/config|POST|(*2)に記載|現在の設定ファイルの状態を変更する|
+|/fcmsetup|POST|id|FCMConfigに端末のIDを設定する．|
 |/collection|GET|id,ku,kana1,kana2,juusho|地域を検索し，ゴミ収集日の検索結果(*2)を返す|
 |/today|GET|なし|設定ファイルのカテゴリと収集地域IDから今日が収集日かを返す．(*4)|
 |/tomorrow|GET|なし|設定ファイルのカテゴリと収集地域IDから明日が収集日かを返す．(*4)|
-|/notify|GET|なし|条件(*5)を満たしている場合，プッシュ通知を行う
+|/notify|GET|なし|条件(*5)を満たしている場合，FCMConfigの端末IDを使ってプッシュ通知を行う|
 
 *1: 設定ファイルには，以下に示すものが含まれる
 - name: ゴミ箱につける名前
