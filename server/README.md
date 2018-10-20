@@ -3,7 +3,7 @@
 ## 導入
 ``` bash
 $ python -m venv server
-$ cd smart-gomibako
+$ cd server
 $ source bin/activate
 $ pip install -r requirements.txt
 $ python server.py
