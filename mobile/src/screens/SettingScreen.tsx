@@ -1,8 +1,7 @@
-import React from "react";
+import React from "react"
 import {
   Container,
   Content,
-  Button,
   Text,
   Icon,
   Input,
@@ -10,50 +9,38 @@ import {
   Switch,
   Separator,
   Body,
-  Right
-} from "native-base";
-import { NavigationScreenProp } from "react-navigation";
+  Right,
+  Picker,
+} from "native-base"
+import { NavigationScreenProp } from "react-navigation"
 
 interface State {
   coords: {
-    latitude: number;
-    longitude: number;
-  };
-  config1: boolean;
-  config2: boolean;
+    latitude: number
+    longitude: number
+  }
+  config1: boolean
+  config2: boolean
 }
 interface Props {
-  navigation: NavigationScreenProp<any>;
+  navigation: NavigationScreenProp<any>
 }
 
 export default class MainScreen extends React.Component<Props, State> {
   constructor(props: Props) {
-    super(props);
+    super(props)
 
     this.state = {
       coords: {
         latitude: 0,
-        longitude: 0
+        longitude: 0,
       },
       config1: false,
-      config2: false
-    };
+      config2: false,
+    }
   }
 
-  onPressButton = async () => {
-    try {
-      const position: any = await getPosition(5000);
-      const { latitude, longitude } = position.coords;
-      this.setState({
-        coords: {
-          latitude,
-          longitude
-        }
-      });
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
+  getAddress() {}
 
   render() {
     return (
@@ -61,27 +48,37 @@ export default class MainScreen extends React.Component<Props, State> {
         <Content>
           {/* // Text input box with icon aligned to the right */}
 
-          <Separator bordered>
-            <Text>地域</Text>
-          </Separator>
-          <ListItem last>
+          <Separator bordered />
+          <ListItem>
             <Body>
-              <Input
-                value={
-                  String(this.state.coords.latitude) +
-                  " " +
-                  String(this.state.coords.longitude)
-                }
-                style={{
-                  borderWidth: 0.2,
-                  borderRadius: 5
-                }}
-              />
+              <Text>郵便番号</Text>
             </Body>
             <Right>
-              <Button onPress={this.onPressButton}>
-                <Icon active name="navigate" />
-              </Button>
+              <Input
+                style={{ width: 90 }}
+                maxLength={7}
+                onEndEditing={() => {}}
+              />
+            </Right>
+          </ListItem>
+          <ListItem last>
+            <Body>
+              <Text>町</Text>
+            </Body>
+            <Right>
+              <Picker
+                mode="dropdown"
+                iosHeader="Select your SIM"
+                iosIcon={<Icon name="ios-arrow-down-outline" />}
+                selectedValue={"key0"}
+                onValueChange={() => {}}
+              >
+                <Picker.Item label="Wallet" value="key0" />
+                <Picker.Item label="ATM Card" value="key1" />
+                <Picker.Item label="Debit Card" value="key2" />
+                <Picker.Item label="Credit Card" value="key3" />
+                <Picker.Item label="Net Banking" value="key4" />
+              </Picker>
             </Right>
           </ListItem>
           <Separator bordered>
@@ -95,7 +92,7 @@ export default class MainScreen extends React.Component<Props, State> {
               <Switch
                 value={this.state.config1}
                 onValueChange={() => {
-                  this.setState({ config1: !this.state.config1 });
+                  this.setState({ config1: !this.state.config1 })
                 }}
               />
             </Right>
@@ -108,21 +105,13 @@ export default class MainScreen extends React.Component<Props, State> {
               <Switch
                 value={this.state.config2}
                 onValueChange={() => {
-                  this.setState({ config2: !this.state.config2 });
+                  this.setState({ config2: !this.state.config2 })
                 }}
               />
             </Right>
           </ListItem>
         </Content>
       </Container>
-    );
+    )
   }
-}
-
-async function getPosition(timeoutMillis = 10000) {
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject, {
-      timeout: timeoutMillis
-    });
-  });
 }

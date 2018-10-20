@@ -1,59 +1,59 @@
-import React from "react";
-import { Image, Alert } from "react-native";
-import { Container, Content, Button, Icon, Text } from "native-base";
-import { NavigationScreenProp } from "react-navigation";
-import ApiClient from "../libs/ApiClient";
+import React from "react"
+import { Image, Alert } from "react-native"
+import { Container, Content, Button, Icon, Text } from "native-base"
+import { NavigationScreenProp } from "react-navigation"
+import ApiClient from "../libs/ApiClient"
 
 interface State {
-  amount: number;
-  name: string;
+  amount: number
+  name: string
 }
 interface Props {
-  navigation: NavigationScreenProp<any>;
+  navigation: NavigationScreenProp<any>
 }
 
 export default class MainScreen extends React.Component<Props, State> {
   constructor(props: Props) {
-    super(props);
+    super(props)
 
     this.state = {
       amount: 0,
-      name: "燃えるごみ"
-    };
+      name: "燃えるごみ",
+    }
   }
 
   async componentDidMount() {
     try {
-      const amount = await ApiClient.getAmount();
+      const amount = await ApiClient.getAmount()
       this.setState({
-        amount
-      });
+        amount,
+      })
     } catch (err) {
-      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。");
+      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
     }
   }
 
   render() {
-    let img_dustbox;
+    let img_dustbox
     switch (this.state.amount) {
       case 0:
-        img_dustbox = require("../assets/dustbox.png");
-        break;
+        img_dustbox = require("../assets/dustbox.png")
+        break
       case 1:
-        img_dustbox = require("../assets/dustbox_25.png");
-        break;
+        img_dustbox = require("../assets/dustbox_25.png")
+        break
       case 2:
-        img_dustbox = require("../assets/dustbox_50.png");
-        break;
+        img_dustbox = require("../assets/dustbox_50.png")
+        break
       case 3:
-        img_dustbox = require("../assets/dustbox_75.png");
-        break;
+        img_dustbox = require("../assets/dustbox_75.png")
+        break
       case 4:
-        img_dustbox = require("../assets/dustbox_100.png");
-        break;
+        img_dustbox = require("../assets/dustbox_100.png")
+        break
       default:
-        img_dustbox = require("../assets/dustbox.png");
-        break;
+        img_dustbox = require("../assets/dustbox.png")
+        break
     }
 
     return (
@@ -66,7 +66,7 @@ export default class MainScreen extends React.Component<Props, State> {
               justifyContent: "center",
               fontSize: 60,
               fontWeight: "bold",
-              marginTop: 30
+              marginTop: 30,
             }}
           >
             {this.state.name}
@@ -78,7 +78,7 @@ export default class MainScreen extends React.Component<Props, State> {
               height: 300,
               marginTop: 50,
               alignSelf: "center",
-              tintColor: "#5cb85c"
+              tintColor: "#5cb85c",
             }}
           />
           <Text
@@ -88,7 +88,7 @@ export default class MainScreen extends React.Component<Props, State> {
               alignSelf: "center",
               fontSize: 60,
               fontWeight: "bold",
-              marginTop: 290
+              marginTop: 290,
             }}
           >
             {this.state.amount * 25 + "%"}
@@ -97,7 +97,7 @@ export default class MainScreen extends React.Component<Props, State> {
             transparent
             large
             onPress={() => {
-              this.props.navigation.navigate("Setting");
+              this.props.navigation.navigate("Setting")
             }}
             success
             style={{ marginTop: 40, alignSelf: "center", height: 100 }}
@@ -106,6 +106,6 @@ export default class MainScreen extends React.Component<Props, State> {
           </Button>
         </Content>
       </Container>
-    );
+    )
   }
 }
