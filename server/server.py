@@ -107,7 +107,7 @@ def notify():
     with open(FCM_CONFIG_FILE) as fcm_config_json:
         fcm_config = json.load(fcm_config_json)
     
-    amount = get_amount(True)
+    amount = get_amount()
     response = jsonify({'result': 'no notification'})
     if amount >= GOMIBAKO_THRESHOLD:
         if nowIsCollectionDay(collection, config):

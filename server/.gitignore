@@ -7,3 +7,4 @@ collection.json
 config.json
 fcmconfig.json
 *.cfg
+.DS_Store
