@@ -13,34 +13,62 @@ import {
   Picker,
 } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
+import ApiClient from "../libs/ApiClient"
 
 interface State {
-  coords: {
-    latitude: number
-    longitude: number
-  }
   config1: boolean
   config2: boolean
+  candidate: any
+  address_id: string
 }
 interface Props {
   navigation: NavigationScreenProp<any>
 }
 
 export default class MainScreen extends React.Component<Props, State> {
+  private items: JSX.Element[]
+
   constructor(props: Props) {
     super(props)
-
+    this.items = []
     this.state = {
-      coords: {
-        latitude: 0,
-        longitude: 0,
-      },
       config1: false,
       config2: false,
+      candidate: [],
+      address_id: "undefined",
     }
   }
 
-  getAddress() {}
+  async getAddress(zipcode: string): Promise<void> {
+    const url: string = `https://apis.postcode-jp.com/api/postcodes?general=true&normalize=false&office=true&postcode=${zipcode}&startWith=false&apiKey=CTzEFecadvquYhsEVvA4ntiIJ9kEPJGU0Uj3o5q`
+
+    const response = await fetch(url)
+    if (!response.ok) throw "Failed to GET Address."
+    const jsonData = await response.json()
+    const town = jsonData.data[0].town
+    const street = jsonData.data[0].streetFullKana
+    const ku = town.substr(3)
+    const kana1 = street[0]
+    const kana2 = street[1]
+    await ApiClient.getCollection(ku, kana1, kana2)
+    const res = await ApiClient.getCollection(ku, kana1, kana2)
+    this.items = []
+    for (let i = 0; i < res.length; i++) {
+      this.items.push(
+        <Picker.Item key={res[i].id} label={res[i].juusho} value={res[i].id} />
+      )
+    }
+    this.setState({
+      candidate: res,
+    })
+    // return jsonData.amount
+  }
+
+  addressChange = async (itemValue: string) => {
+    await ApiClient.postConfigID(itemValue)
+    console.log(itemValue)
+    this.setState({ address_id: itemValue })
+  }
 
   render() {
     return (
@@ -57,27 +85,23 @@ export default class MainScreen extends React.Component<Props, State> {
               <Input
                 style={{ width: 90 }}
                 maxLength={7}
-                onEndEditing={() => {}}
+                onEndEditing={e => this.getAddress(e.nativeEvent.text)}
               />
             </Right>
           </ListItem>
           <ListItem last>
             <Body>
-              <Text>町</Text>
+              <Text>町名</Text>
             </Body>
             <Right>
               <Picker
                 mode="dropdown"
-                iosHeader="Select your SIM"
+                iosHeader="住まいの住所"
                 iosIcon={<Icon name="ios-arrow-down-outline" />}
-                selectedValue={"key0"}
-                onValueChange={() => {}}
+                selectedValue={this.state.address_id}
+                onValueChange={itemValue => this.addressChange(itemValue)}
               >
-                <Picker.Item label="Wallet" value="key0" />
-                <Picker.Item label="ATM Card" value="key1" />
-                <Picker.Item label="Debit Card" value="key2" />
-                <Picker.Item label="Credit Card" value="key3" />
-                <Picker.Item label="Net Banking" value="key4" />
+                {this.items}
               </Picker>
             </Right>
           </ListItem>
