@@ -21,13 +21,17 @@ export default class MainScreen extends React.Component<Props, State> {
       name: "家庭ゴミ"
     };
 
-    axios.get("https://localhost:5000/")
+    // 同一ネットワークに接続し，APIサーバの立っているPC(orデバイス)のIPにアクセスする
+    axios.get("http://10.32.228.233:5000/")
       .then(res => {
-        console.log('res')
+        console.log(res)
         this.setState({
           amount: 100,
           name: "プラごみ"
         })
+      })
+      .catch(error => {
+        console.log('error');
       });
   }
 
