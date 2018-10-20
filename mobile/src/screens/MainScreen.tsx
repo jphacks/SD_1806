@@ -20,6 +20,28 @@ export default class MainScreen extends React.Component<Props, State> {
   }
 
   render() {
+    let img_dustbox;
+    switch (this.state.amount) {
+      case 0:
+        img_dustbox = require("../assets/dustbox.png");
+        break;
+      case 1:
+        img_dustbox = require("../assets/dustbox_25.png");
+        break;
+      case 2:
+        img_dustbox = require("../assets/dustbox_50.png");
+        break;
+      case 3:
+        img_dustbox = require("../assets/dustbox_75.png");
+        break;
+      case 4:
+        img_dustbox = require("../assets/dustbox_100.png");
+        break;
+      default:
+        img_dustbox = require("../assets/dustbox.png");
+        break;
+    }
+
     return (
       <Container>
         <Content>
@@ -36,7 +58,7 @@ export default class MainScreen extends React.Component<Props, State> {
             {"燃えるゴミ"}
           </Text>
           <Image
-            source={require("../assets/dustbox.png")}
+            source={img_dustbox}
             style={{
               width: 300,
               height: 300,
@@ -52,7 +74,7 @@ export default class MainScreen extends React.Component<Props, State> {
               alignSelf: "center",
               fontSize: 60,
               fontWeight: "bold",
-              marginTop: 280
+              marginTop: 290
             }}
           >
             {this.state.amount + "%"}
