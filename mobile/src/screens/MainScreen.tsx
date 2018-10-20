@@ -2,9 +2,11 @@ import React from "react";
 import { Image } from "react-native";
 import { Container, Content, Button, Icon, Text } from "native-base";
 import { NavigationScreenProp } from "react-navigation";
+import axios from 'axios'
 
 interface State {
   amount: number;
+  name: string;
 }
 interface Props {
   navigation: NavigationScreenProp<any>;
@@ -15,8 +17,18 @@ export default class MainScreen extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      amount: 0
+      amount: 0,
+      name: "家庭ゴミ"
     };
+
+    axios.get("https://localhost:5000/")
+      .then(res => {
+        console.log('res')
+        this.setState({
+          amount: 100,
+          name: "プラごみ"
+        })
+      });
   }
 
   render() {
@@ -33,7 +45,7 @@ export default class MainScreen extends React.Component<Props, State> {
               marginTop: 30
             }}
           >
-            {"燃えるゴミ"}
+            { this.state.name }
           </Text>
           <Image
             source={require("../assets/dustbox.png")}
