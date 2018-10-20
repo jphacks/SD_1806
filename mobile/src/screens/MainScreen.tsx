@@ -1,8 +1,8 @@
 import React from "react";
-import { Image } from "react-native";
+import { Image, Alert } from "react-native";
 import { Container, Content, Button, Icon, Text } from "native-base";
 import { NavigationScreenProp } from "react-navigation";
-import { example } from "../APIAccess"
+import ApiClient from "../libs/ApiClient";
 
 interface State {
   amount: number;
@@ -18,13 +18,46 @@ export default class MainScreen extends React.Component<Props, State> {
 
     this.state = {
       amount: 0,
-      name: "家庭ゴミ"
+      name: "燃えるごみ"
     };
 
     example(this);
   }
 
+  async componentDidMount() {
+    try {
+      const amount = await ApiClient.getAmount();
+      this.setState({
+        amount
+      });
+    } catch (err) {
+      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。");
+    }
+  }
+
   render() {
+    let img_dustbox;
+    switch (this.state.amount) {
+      case 0:
+        img_dustbox = require("../assets/dustbox.png");
+        break;
+      case 1:
+        img_dustbox = require("../assets/dustbox_25.png");
+        break;
+      case 2:
+        img_dustbox = require("../assets/dustbox_50.png");
+        break;
+      case 3:
+        img_dustbox = require("../assets/dustbox_75.png");
+        break;
+      case 4:
+        img_dustbox = require("../assets/dustbox_100.png");
+        break;
+      default:
+        img_dustbox = require("../assets/dustbox.png");
+        break;
+    }
+
     return (
       <Container>
         <Content>
@@ -38,10 +71,10 @@ export default class MainScreen extends React.Component<Props, State> {
               marginTop: 30
             }}
           >
-            { this.state.name }
+            {this.state.name}
           </Text>
           <Image
-            source={require("../assets/dustbox.png")}
+            source={img_dustbox}
             style={{
               width: 300,
               height: 300,
@@ -52,15 +85,15 @@ export default class MainScreen extends React.Component<Props, State> {
           />
           <Text
             style={{
-              color: "#5cb85c",
+              color: "#addbad",
               position: "absolute",
               alignSelf: "center",
               fontSize: 60,
               fontWeight: "bold",
-              marginTop: 280
+              marginTop: 290
             }}
           >
-            {this.state.amount + "%"}
+            {this.state.amount * 25 + "%"}
           </Text>
           <Button
             transparent
@@ -69,7 +102,7 @@ export default class MainScreen extends React.Component<Props, State> {
               this.props.navigation.navigate("Setting");
             }}
             success
-            style={{ marginTop: 20, alignSelf: "center", height: 100 }}
+            style={{ marginTop: 40, alignSelf: "center", height: 100 }}
           >
             <Icon name="settings" style={{ fontSize: 100 }} />
           </Button>
