@@ -27,6 +27,7 @@ export default class MainScreen extends React.Component<Props, State> {
             style={{
               color: "#5cb85c",
               alignSelf: "center",
+              justifyContent: "center",
               fontSize: 60,
               fontWeight: "bold",
               marginTop: 30
@@ -63,8 +64,9 @@ export default class MainScreen extends React.Component<Props, State> {
               this.props.navigation.navigate("Setting");
             }}
             success
+            style={{ marginTop: 20, alignSelf: "center", height: 100 }}
           >
-            <Icon name="settings" style={{ fontSize: 50, marginTop: 25 }} />
+            <Icon name="settings" style={{ fontSize: 100 }} />
           </Button>
         </Content>
       </Container>
