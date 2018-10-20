@@ -20,8 +20,6 @@ export default class MainScreen extends React.Component<Props, State> {
       amount: 0,
       name: "燃えるごみ"
     };
-
-    example(this);
   }
 
   async componentDidMount() {
