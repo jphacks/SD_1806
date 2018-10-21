@@ -42,15 +42,18 @@ export default class MainScreen extends React.Component<Props, State> {
         img_dustbox = require("../assets/dustbox.png")
         break
       case 1:
-        img_dustbox = require("../assets/dustbox_25.png")
+        img_dustbox = require("../assets/dustbox_20.png")
         break
       case 2:
-        img_dustbox = require("../assets/dustbox_50.png")
+        img_dustbox = require("../assets/dustbox_40.png")
         break
       case 3:
-        img_dustbox = require("../assets/dustbox_75.png")
+        img_dustbox = require("../assets/dustbox_60.png")
         break
       case 4:
+        img_dustbox = require("../assets/dustbox_80.png")
+        break
+      case 5:
         img_dustbox = require("../assets/dustbox_100.png")
         break
       default:
@@ -93,7 +96,7 @@ export default class MainScreen extends React.Component<Props, State> {
               marginTop: 290,
             }}
           >
-            {this.state.amount * 25 + "%"}
+            {this.state.amount * 20 + "%"}
           </Text>
           <Button
             transparent

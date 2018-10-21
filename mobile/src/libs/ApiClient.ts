@@ -1,4 +1,4 @@
-const API_ROOT = "http://127.0.0.1:5000/"
+const API_ROOT = "https://jonghelper.com/gomi/"
 
 export default class ApiClient {
   //   static async postConfig(ku: string, kana1: string, kana2: string, ): Promise<void> {}
