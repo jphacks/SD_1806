@@ -1,4 +1,5 @@
 import React from "react"
+import { AsyncStorage, Alert } from "react-native"
 import {
   Container,
   Content,
@@ -19,7 +20,7 @@ interface State {
   config1: boolean
   config2: boolean
   candidate: any
-  address_id: string
+  address_id: number
 }
 interface Props {
   navigation: NavigationScreenProp<any>
@@ -35,7 +36,7 @@ export default class MainScreen extends React.Component<Props, State> {
       config1: false,
       config2: false,
       candidate: [],
-      address_id: "undefined",
+      address_id: 0,
     }
   }
 
@@ -50,8 +51,9 @@ export default class MainScreen extends React.Component<Props, State> {
     const ku = town.substr(3)
     const kana1 = street[0]
     const kana2 = street[1]
-    await ApiClient.getCollection(ku, kana1, kana2)
+    console.log(ku, kana1, kana2)
     const res = await ApiClient.getCollection(ku, kana1, kana2)
+    console.log(res)
     this.items = []
     for (let i = 0; i < res.length; i++) {
       this.items.push(
@@ -61,13 +63,29 @@ export default class MainScreen extends React.Component<Props, State> {
     this.setState({
       candidate: res,
     })
-    // return jsonData.amount
   }
 
-  addressChange = async (itemValue: string) => {
-    await ApiClient.postConfigID(itemValue)
+  addressChange = async (itemValue: number) => {
     console.log(itemValue)
-    this.setState({ address_id: itemValue })
+    if (itemValue == null) return
+    for (let i = 0; i < this.state.candidate.length; i++) {
+      if (this.state.candidate[i].id == itemValue) {
+        await ApiClient.postConfigID(itemValue.toString())
+        try {
+          // await AsyncStorage.setItem("address_id", itemValue.toString())
+          // await AsyncStorage.setItem("juusho", this.state.candidate[i].jusho)
+          // await AsyncStorage.setItem("kamirui", this.state.candidate[i].kamirui)
+          // await AsyncStorage.setItem("kanbin", this.state.candidate[i].kanbin)
+          // await AsyncStorage.setItem("katei", this.state.candidate[i].katei)
+          // await AsyncStorage.setItem("pura", this.state.candidate[i].pura)
+        } catch (error) {
+          // Error saving data
+          Alert.alert("設定の保存に失敗しました。")
+        }
+        this.setState({ address_id: itemValue })
+        break
+      }
+    }
   }
 
   render() {
@@ -123,7 +141,7 @@ export default class MainScreen extends React.Component<Props, State> {
           </ListItem>
           <ListItem last>
             <Body>
-              <Text>ゴミ箱喋るよ</Text>
+              <Text>ゴミ箱の音声通知</Text>
             </Body>
             <Right>
               <Switch
