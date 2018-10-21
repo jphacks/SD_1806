@@ -1,7 +1,7 @@
 # すごいゴミ箱(仮)
 
 
-->[![Product Name](mobile.jpg)](https://www.youtube.com/watch?v=xhzDoDKeDpo&feature=youtu.be)<-
+[![Product Name](mobile.jpg)]<-(https://www.youtube.com/watch?v=xhzDoDKeDpo&feature=youtu.be)
 
 ## 製品概要
 ### ゴミ箱 × Tech
@@ -61,7 +61,7 @@
 #### API・データ
 
 * ~~ゴミ収集日取得API （オープンデータプラットフォーム）~~
-* サーバーがメンテされておらず500だったので仙台市について自前で実装
+* サーバーがメンテされておらずレスポンスが500番だったので仙台市について自前で実装
 
 #### フレームワーク・ライブラリ・モジュール
 * Firebase
