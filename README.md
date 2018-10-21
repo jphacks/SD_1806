@@ -1,7 +1,7 @@
 # すごいゴミ箱(仮)
 
 
-[![Product Name](mobile.jpg)]<-(https://www.youtube.com/watch?v=xhzDoDKeDpo&feature=youtu.be)
+[![Product Name](mobile.jpg)](https://www.youtube.com/watch?v=xhzDoDKeDpo&feature=youtu.be)
 
 ## 製品概要
 ### ゴミ箱 × Tech
