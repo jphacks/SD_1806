@@ -1,0 +1,10 @@
+__pycache__/
+bin/
+include/
+lib/
+pip-selfcheck.json
+collection.json
+config.json
+fcmconfig.json
+*.cfg
+.DS_Store

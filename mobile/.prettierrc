@@ -1,0 +1,7 @@
+{
+    "singleQuote": false,
+    "trailingComma": "es5",
+    "semi": false,
+    "exclude": ["node_modules", "**/*.spec.ts"]
+  }
+  
