@@ -22,7 +22,7 @@ def search_by_juusho(collection, juusho):
 
 def search_collection(collection, config, id, ku, kana1, kana2, juusho):
     result = collection
-
+    
     if id:
         result = search_by_id(collection, id)
     elif ku:
