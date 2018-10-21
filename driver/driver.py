@@ -12,7 +12,7 @@ loop_interval = 0.5
 notify_interval = 60
 api_url = 'https://jonghelper.com/gomi/'
 notify_sound = './gomi_today.wav'
-post_amount_interval = 4
+post_amount_interval = 1.6
 
 
 def cleanup():
@@ -43,8 +43,9 @@ def notify():
 
 def post_amount(amount):
     print('\033[32;1m==== posting amount: ' + str(amount) + ' ====\033[0m')
-    requests.post(api_url + 'amount?=' + str(amount))
-    # TODO: error handling
+    responce = requests.post(api_url + 'amount', {'amount': amount})
+    if responce.status_code != 200:
+        print('\033[31;1m==== failed to post amount: ' + responce.status_code + ' ====\033[0m')
 
 
 def main():
@@ -84,7 +85,7 @@ def main():
 
         # notification triggered by human sensor
         print('  human sensor: {}'.format(is_human_detected()))
-        if is_human_detected() and amount == len(pd_pins):
+        if is_human_detected() and amount >= len(pd_pins) - 1:
             if now - last_notified > notify_interval:
                 print('play notification...')
                 notify()
