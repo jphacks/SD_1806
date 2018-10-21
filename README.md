@@ -1,7 +1,7 @@
 # すごいゴミ箱(仮) 肥やし丸　ごみ太郎DX
 
 
-[![Product Name](image.png)](https://www.youtube.com/watch?v=G5rULR53uMk)
+[![Product Name](image.png)](https://www.youtube.com/watch?v=xhzDoDKeDpo&feature=youtu.be)
 
 ## 製品概要
 ### ゴミ箱 × Tech
@@ -87,5 +87,5 @@
   - 赤外線センサー自身の回路
 
 * ソフトウェア
- - 誰か頼む
+ - ゴミ箱の内容量をリアルタイムで確認できるアプリケーション
 　
