@@ -1,7 +1,10 @@
 # すごいゴミ箱(仮)
 
+## 紹介動画
+[![PV](http://img.youtube.com/vi/rz9x2mWWMG0/0.jpg)](https://www.youtube.com/watch?v=rz9x2mWWMG0)]
 
-[![Product Name](gomi.jpg)](https://www.youtube.com/watch?v=xhzDoDKeDpo&feature=youtu.be)
+## 製品外観
+[![Gomibako](gomi.jpg)]
 
 ## 製品概要
 ### ゴミ箱 × Tech
@@ -80,11 +83,12 @@
 
 ### 独自開発技術（Hack Dayで開発したもの）
 #### 2日間に開発した独自の機能・技術
-* リアルタイムにゴミの内容量をモニタリングできるIoTゴミ箱
+* リアルタイムにゴミの内容量をモニタリング、適切なタイミングで通知をしてくれるIoTゴミ箱
 
 * ハードウェア
   - 筐体（レゴブロックにて自作）
-  - 赤外線センサー自身の回路
+  - 赤外線センサーの回路設計
+  - 赤外線センサーの回路の作成
 
 * ソフトウェア
  - ゴミ箱の内容量をリアルタイムで確認できるアプリケーション
