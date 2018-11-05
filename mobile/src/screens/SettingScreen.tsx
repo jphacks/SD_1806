@@ -1,5 +1,4 @@
 import React from "react"
-import { AsyncStorage, Alert } from "react-native"
 import {
   Container,
   Content,
@@ -15,12 +14,13 @@ import {
 } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import ApiClient from "../libs/ApiClient"
+import Setting from "../interface/Setting"
+import Category from "../libs/Category"
 
 interface State {
-  config1: boolean
-  config2: boolean
+  setting: Setting
   candidate: any
-  address_id: number
+  address_id: string
 }
 interface Props {
   navigation: NavigationScreenProp<any>
@@ -32,11 +32,20 @@ export default class MainScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.items = []
+    const setting: Setting = {
+      collection: "-1",
+      name: "家庭ごみ",
+      category: Category.katei,
+      notify_for_today: true,
+      notify_for_tomorrow: true,
+      notification_time_for_today: "07:00",
+      notification_time_for_tomorrow: "19:00",
+    }
+
     this.state = {
-      config1: false,
-      config2: false,
+      setting,
       candidate: [],
-      address_id: 0,
+      address_id: "undefined",
     }
   }
 
@@ -51,9 +60,8 @@ export default class MainScreen extends React.Component<Props, State> {
     const ku = town.substr(3)
     const kana1 = street[0]
     const kana2 = street[1]
-    console.log(ku, kana1, kana2)
+    await ApiClient.getCollection(ku, kana1, kana2)
     const res = await ApiClient.getCollection(ku, kana1, kana2)
-    console.log(res)
     this.items = []
     for (let i = 0; i < res.length; i++) {
       this.items.push(
@@ -63,29 +71,13 @@ export default class MainScreen extends React.Component<Props, State> {
     this.setState({
       candidate: res,
     })
+    // return jsonData.amount
   }
 
-  addressChange = async (itemValue: number) => {
+  addressChange = async (itemValue: string) => {
+    await ApiClient.postConfigID(itemValue)
     console.log(itemValue)
-    if (itemValue == null) return
-    for (let i = 0; i < this.state.candidate.length; i++) {
-      if (this.state.candidate[i].id == itemValue) {
-        await ApiClient.postConfigID(itemValue.toString())
-        try {
-          // await AsyncStorage.setItem("address_id", itemValue.toString())
-          // await AsyncStorage.setItem("juusho", this.state.candidate[i].jusho)
-          // await AsyncStorage.setItem("kamirui", this.state.candidate[i].kamirui)
-          // await AsyncStorage.setItem("kanbin", this.state.candidate[i].kanbin)
-          // await AsyncStorage.setItem("katei", this.state.candidate[i].katei)
-          // await AsyncStorage.setItem("pura", this.state.candidate[i].pura)
-        } catch (error) {
-          // Error saving data
-          Alert.alert("設定の保存に失敗しました。")
-        }
-        this.setState({ address_id: itemValue })
-        break
-      }
-    }
+    this.setState({ address_id: itemValue })
   }
 
   render() {
@@ -128,26 +120,42 @@ export default class MainScreen extends React.Component<Props, State> {
           </Separator>
           <ListItem>
             <Body>
-              <Text>ゴミ捨て日の通知</Text>
+              <Text>当日の通知</Text>
             </Body>
             <Right>
               <Switch
-                value={this.state.config1}
+                value={this.state.setting.notify_for_today}
                 onValueChange={() => {
-                  this.setState({ config1: !this.state.config1 })
+                  this.setState(prevState => {
+                    const updateSetting = {
+                      ...prevState.setting,
+                      notify_for_today: !prevState.setting.notify_for_today,
+                    }
+                    return {
+                      setting: updateSetting,
+                    }
+                  })
                 }}
               />
             </Right>
           </ListItem>
           <ListItem last>
             <Body>
-              <Text>ゴミ箱の音声通知</Text>
+              <Text>前日の通知</Text>
             </Body>
             <Right>
               <Switch
-                value={this.state.config2}
+                value={this.state.setting.notify_for_tomorrow}
                 onValueChange={() => {
-                  this.setState({ config2: !this.state.config2 })
+                  this.setState(prevState => {
+                    const updateSetting = {
+                      ...prevState.setting,
+                      notify_for_today: !prevState.setting.notify_for_tomorrow,
+                    }
+                    return {
+                      setting: updateSetting,
+                    }
+                  })
                 }}
               />
             </Right>
