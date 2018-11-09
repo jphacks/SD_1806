@@ -1,12 +1,14 @@
 import React from "react"
-import { Image, Alert } from "react-native"
-import { Container, Content, Button, Icon, Text } from "native-base"
+import { Image, ImageStyle, StyleSheet, Alert } from "react-native"
+import { Container, Content, Button, Icon, Text, View, Col } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import ApiClient from "../libs/ApiClient"
+import Color from "../libs/Color"
 
 interface State {
   amount: number
   name: string
+  amountTextPosition: number
 }
 interface Props {
   navigation: NavigationScreenProp<any>
@@ -19,6 +21,7 @@ export default class MainScreen extends React.Component<Props, State> {
     this.state = {
       amount: 0,
       name: "燃えるごみ",
+      amountTextPosition: 0,
     }
   }
 
@@ -60,57 +63,77 @@ export default class MainScreen extends React.Component<Props, State> {
         img_dustbox = require("../assets/dustbox.png")
         break
     }
-
     return (
       <Container>
-        <Content>
-          <Text
-            style={{
-              color: "#5cb85c",
-              alignSelf: "center",
-              justifyContent: "center",
-              fontSize: 60,
-              fontWeight: "bold",
-              marginTop: 30,
+        <Content style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.nameText}>{this.state.name}</Text>
+          </View>
+          <View
+            style={{ flex: 3 }}
+            onLayout={event => {
+              this.setState({
+                amountTextPosition: event.nativeEvent.layout.height / 2,
+              })
             }}
           >
-            {this.state.name}
-          </Text>
-          <Image
-            source={img_dustbox}
-            style={{
-              width: 300,
-              height: 300,
-              marginTop: 50,
-              alignSelf: "center",
-              tintColor: "#5cb85c",
-            }}
-          />
-          <Text
-            style={{
-              color: "#addbad",
-              position: "absolute",
-              alignSelf: "center",
-              fontSize: 60,
-              fontWeight: "bold",
-              marginTop: 290,
-            }}
-          >
-            {this.state.amount * 20 + "%"}
-          </Text>
-          <Button
-            transparent
-            large
-            onPress={() => {
-              this.props.navigation.navigate("Setting")
-            }}
-            success
-            style={{ marginTop: 40, alignSelf: "center", height: 100 }}
-          >
-            <Icon name="settings" style={{ fontSize: 100 }} />
-          </Button>
+            <Image source={img_dustbox} style={imgStyles.dustBoxImg} />
+            <Text
+              style={[
+                styles.amountText,
+                { marginTop: this.state.amountTextPosition },
+              ]}
+            >
+              {this.state.amount * 20 + "%"}
+            </Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Button
+              transparent
+              large
+              onPress={() => {
+                this.props.navigation.navigate("Setting")
+              }}
+              success
+              style={{ marginTop: 40, alignSelf: "center", height: 100 }}
+            >
+              <Icon name="settings" style={{ fontSize: 100 }} />
+            </Button>
+          </View>
         </Content>
       </Container>
     )
   }
 }
+
+interface ImgStyles {
+  dustBoxImg: ImageStyle
+}
+
+const imgStyles = StyleSheet.create<ImgStyles>({
+  dustBoxImg: {
+    flex: 1,
+    width: undefined,
+    height: undefined,
+    tintColor: Color.main,
+    resizeMode: "contain",
+  },
+})
+
+const styles = StyleSheet.create({
+  nameText: {
+    color: Color.main,
+    alignSelf: "center",
+    fontSize: 60,
+    fontWeight: "bold",
+    marginTop: 30,
+  },
+  amountText: {
+    color: Color.secandary,
+    position: "absolute",
+    alignSelf: "center",
+    marginTop: 0,
+    fontSize: 60,
+    fontWeight: "bold",
+  },
+})
