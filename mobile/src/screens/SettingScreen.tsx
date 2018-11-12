@@ -1,165 +1,287 @@
 import React from "react"
+import { AsyncStorage, Alert } from "react-native"
 import {
   Container,
   Content,
   Text,
   Icon,
   Input,
+  List,
   ListItem,
-  Switch,
   Separator,
   Body,
   Right,
+  Left,
+  Button,
   Picker,
+  Switch,
 } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
-import ApiClient from "../libs/ApiClient"
 import Setting from "../interface/Setting"
-import Category from "../libs/Category"
+import DayOfWeek from "../libs/DayOfWeek"
 
 interface State {
   setting: Setting
-  candidate: any
   address_id: string
+  candidate: any
 }
 interface Props {
   navigation: NavigationScreenProp<any>
 }
 
-export default class MainScreen extends React.Component<Props, State> {
-  private items: JSX.Element[]
-
+export default class SettingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
-    this.items = []
+
     const setting: Setting = {
-      collection: "-1",
-      name: "家庭ごみ",
-      category: Category.katei,
-      notify_for_today: true,
-      notify_for_tomorrow: true,
-      notification_time_for_today: "07:00",
-      notification_time_for_tomorrow: "19:00",
+      name: "",
+      garbageDay: DayOfWeek.Monday,
+      notificationDay: DayOfWeek.Monday,
+      notificationTime: 0,
+      notificationSound: true,
     }
 
     this.state = {
       setting,
-      candidate: [],
       address_id: "undefined",
+      candidate: [],
     }
   }
 
-  async getAddress(zipcode: string): Promise<void> {
-    const url: string = `https://apis.postcode-jp.com/api/postcodes?general=true&normalize=false&office=true&postcode=${zipcode}&startWith=false&apiKey=CTzEFecadvquYhsEVvA4ntiIJ9kEPJGU0Uj3o5q`
-
-    const response = await fetch(url)
-    if (!response.ok) throw "Failed to GET Address."
-    const jsonData = await response.json()
-    const town = jsonData.data[0].town
-    const street = jsonData.data[0].streetFullKana
-    const ku = town.substr(3)
-    const kana1 = street[0]
-    const kana2 = street[1]
-    await ApiClient.getCollection(ku, kana1, kana2)
-    const res = await ApiClient.getCollection(ku, kana1, kana2)
-    this.items = []
-    for (let i = 0; i < res.length; i++) {
-      this.items.push(
-        <Picker.Item key={res[i].id} label={res[i].juusho} value={res[i].id} />
+  async componentDidMount() {
+    try {
+      const storeName = await AsyncStorage.getItem("name")
+      const storeGarbageDay = await AsyncStorage.getItem("garbageDay")
+      const storeNotificationDay = await AsyncStorage.getItem("notificationDay")
+      const storeNotificationTime = await AsyncStorage.getItem(
+        "notificationTime"
       )
+      const storeNotificationSound = await AsyncStorage.getItem(
+        "notificationSound"
+      )
+      let name, garbageDay, notificationDay, notificationTime, notificationSound
+      if (storeName === null) name = ""
+      else name = storeName
+      if (storeGarbageDay === null) garbageDay = DayOfWeek.Monday
+      else garbageDay = parseInt(storeGarbageDay)
+      if (storeNotificationDay === null) notificationDay = DayOfWeek.Monday
+      else notificationDay = parseInt(storeNotificationDay)
+      if (storeNotificationTime === null) notificationTime = 0
+      else notificationTime = parseInt(storeNotificationTime)
+      if (storeNotificationSound === null) notificationSound = true
+      else notificationSound = storeNotificationSound == "true"
+
+      const setting: Setting = {
+        name,
+        garbageDay,
+        notificationDay,
+        notificationTime,
+        notificationSound,
+      }
+
+      this.setState({
+        setting,
+      })
+    } catch (error) {
+      Alert.alert("設定の保存に失敗しました。")
     }
-    this.setState({
-      candidate: res,
-    })
-    // return jsonData.amount
   }
 
-  addressChange = async (itemValue: string) => {
-    await ApiClient.postConfigID(itemValue)
-    console.log(itemValue)
-    this.setState({ address_id: itemValue })
+  changeName = async (name: string) => {
+    try {
+      await AsyncStorage.setItem("name", name)
+    } catch (error) {
+      Alert.alert("設定の保存に失敗しました。")
+    }
+    this.setState(prevState => {
+      const updateSetting = {
+        ...prevState.setting,
+        name: name,
+      }
+      return {
+        setting: updateSetting,
+      }
+    })
+    this.props.navigation.state.params.changeSetting()
+  }
+
+  changeGarbageDay = async (day: number) => {
+    try {
+      await AsyncStorage.setItem("day", day.toString())
+    } catch (error) {
+      Alert.alert("設定の保存に失敗しました。")
+    }
+    this.setState(prevState => {
+      const updateSetting = {
+        ...prevState.setting,
+        day: day,
+      }
+      return {
+        setting: updateSetting,
+      }
+    })
+    this.props.navigation.state.params.changeSetting()
+  }
+
+  changeNotificationDay = async (day: number) => {
+    try {
+      await AsyncStorage.setItem("notificationDay", day.toString())
+    } catch (error) {
+      Alert.alert("設定の保存に失敗しました。")
+    }
+    this.setState(prevState => {
+      const updateSetting = {
+        ...prevState.setting,
+        notificationDay: day,
+      }
+      return {
+        setting: updateSetting,
+      }
+    })
+  }
+
+  changeNotificationTime = async (time: number) => {
+    try {
+      await AsyncStorage.setItem("notificationTime", time.toString())
+    } catch (error) {
+      Alert.alert("設定の保存に失敗しました。")
+    }
+    this.setState(prevState => {
+      const updateSetting = {
+        ...prevState.setting,
+        notificationTime: time,
+      }
+      return {
+        setting: updateSetting,
+      }
+    })
+  }
+
+  changeNotificationSound = async (notify: boolean) => {
+    try {
+      await AsyncStorage.setItem("notificationSound", notify.toString())
+    } catch (error) {
+      Alert.alert("設定の保存に失敗しました。")
+    }
+    this.setState(prevState => {
+      const updateSetting = {
+        ...prevState.setting,
+        notificationSound: notify,
+      }
+      return {
+        setting: updateSetting,
+      }
+    })
   }
 
   render() {
+    let timeOptions: JSX.Element[] = []
+    for (let i = 0; i < 24; i++) {
+      timeOptions.push(<Picker.Item key={i} label={i + "時"} value={i} />)
+    }
     return (
       <Container>
         <Content>
-          {/* // Text input box with icon aligned to the right */}
+          <List>
+            <Separator bordered>
+              <Text>ゴミ箱の設定</Text>
+            </Separator>
+            <ListItem>
+              <Left>
+                <Text>ゴミの種類</Text>
+              </Left>
+              <Right>
+                <Input
+                  style={{ width: 200, textAlign: "right" }}
+                  placeholder="Underline Textbox"
+                  maxLength={10}
+                  onChangeText={text => this.changeName(text)}
+                  value={this.state.setting.name}
+                />
+              </Right>
+            </ListItem>
+            <ListItem last>
+              <Left>
+                <Text>ゴミ捨て日</Text>
+              </Left>
+              <Right>
+                <Button
+                  transparent
+                  onPress={() => {
+                    this.props.navigation.navigate("SettingGarbageDay")
+                  }}
+                >
+                  <Icon name="arrow-forward" />
+                </Button>
+              </Right>
+            </ListItem>
 
-          <Separator bordered />
-          <ListItem>
-            <Body>
-              <Text>郵便番号</Text>
-            </Body>
-            <Right>
-              <Input
-                style={{ width: 90 }}
-                maxLength={7}
-                onEndEditing={e => this.getAddress(e.nativeEvent.text)}
-              />
-            </Right>
-          </ListItem>
-          <ListItem last>
-            <Body>
-              <Text>町名</Text>
-            </Body>
-            <Right>
-              <Picker
-                mode="dropdown"
-                iosHeader="住まいの住所"
-                iosIcon={<Icon name="ios-arrow-down-outline" />}
-                selectedValue={this.state.address_id}
-                onValueChange={itemValue => this.addressChange(itemValue)}
-              >
-                {this.items}
-              </Picker>
-            </Right>
-          </ListItem>
-          <Separator bordered>
-            <Text>通知設定</Text>
-          </Separator>
-          <ListItem>
-            <Body>
-              <Text>当日の通知</Text>
-            </Body>
-            <Right>
-              <Switch
-                value={this.state.setting.notify_for_today}
-                onValueChange={() => {
-                  this.setState(prevState => {
-                    const updateSetting = {
-                      ...prevState.setting,
-                      notify_for_today: !prevState.setting.notify_for_today,
-                    }
-                    return {
-                      setting: updateSetting,
-                    }
-                  })
-                }}
-              />
-            </Right>
-          </ListItem>
-          <ListItem last>
-            <Body>
-              <Text>前日の通知</Text>
-            </Body>
-            <Right>
-              <Switch
-                value={this.state.setting.notify_for_tomorrow}
-                onValueChange={() => {
-                  this.setState(prevState => {
-                    const updateSetting = {
-                      ...prevState.setting,
-                      notify_for_today: !prevState.setting.notify_for_tomorrow,
-                    }
-                    return {
-                      setting: updateSetting,
-                    }
-                  })
-                }}
-              />
-            </Right>
-          </ListItem>
+            <Separator bordered>
+              <Text>Push通知設定</Text>
+            </Separator>
+            <ListItem>
+              <Left>
+                <Text>通知曜日</Text>
+              </Left>
+              <Right>
+                <Picker
+                  mode="dropdown"
+                  iosHeader="通知曜日"
+                  iosIcon={<Icon name="ios-arrow-down-outline" />}
+                  selectedValue={this.state.setting.notificationDay}
+                  onValueChange={itemValue =>
+                    this.changeNotificationDay(itemValue)
+                  }
+                >
+                  <Picker.Item label={"日曜日"} value={DayOfWeek.Sunday} />
+                  <Picker.Item label={"月曜日"} value={DayOfWeek.Monday} />
+                  <Picker.Item label={"火曜日"} value={DayOfWeek.Tuesday} />
+                  <Picker.Item label={"水曜日"} value={DayOfWeek.Wednesday} />
+                  <Picker.Item label={"木曜日"} value={DayOfWeek.Thursday} />
+                  <Picker.Item label={"金曜日"} value={DayOfWeek.Friday} />
+                  <Picker.Item label={"土曜日"} value={DayOfWeek.Saturday} />
+                  <Picker.Item label={"通知なし"} value={DayOfWeek.none} />
+                </Picker>
+              </Right>
+            </ListItem>
+            <ListItem last>
+              <Left>
+                <Text>通知の時間帯</Text>
+              </Left>
+              <Right>
+                <Picker
+                  mode="dropdown"
+                  iosHeader="通知の時間帯"
+                  iosIcon={<Icon name="ios-arrow-down-outline" />}
+                  selectedValue={this.state.setting.notificationTime}
+                  onValueChange={itemValue =>
+                    this.changeNotificationTime(itemValue)
+                  }
+                >
+                  {timeOptions}
+                </Picker>
+              </Right>
+            </ListItem>
+
+            <Separator bordered>
+              <Text>音声通知設定</Text>
+            </Separator>
+            <ListItem last>
+              <Left>
+                <Text>ゴミ箱おしゃべりモード</Text>
+              </Left>
+              <Right>
+                <Switch
+                  value={this.state.setting.notificationSound}
+                  onValueChange={() =>
+                    this.changeNotificationSound(
+                      !this.state.setting.notificationSound
+                    )
+                  }
+                />
+              </Right>
+            </ListItem>
+          </List>
         </Content>
       </Container>
     )

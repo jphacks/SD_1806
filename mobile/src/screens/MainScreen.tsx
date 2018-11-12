@@ -1,17 +1,45 @@
 import React from "react"
-import { Image, ImageStyle, StyleSheet, Alert } from "react-native"
+import {
+  Image,
+  ImageStyle,
+  StyleSheet,
+  Alert,
+  AsyncStorage,
+} from "react-native"
 import { Container, Content, Button, Icon, Text, View, Col } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import ApiClient from "../libs/ApiClient"
 import Color from "../libs/Color"
+import DayOfWeek from "../libs/DayOfWeek"
 
 interface State {
   amount: number
   name: string
-  amountTextPosition: number
+  day: DayOfWeek
 }
 interface Props {
   navigation: NavigationScreenProp<any>
+}
+
+function dayOfWeekToString(day: DayOfWeek): string {
+  switch (day) {
+    case DayOfWeek.Monday:
+      return "月曜日"
+    case DayOfWeek.Tuesday:
+      return "火曜日"
+    case DayOfWeek.Wednesday:
+      return "水曜日"
+    case DayOfWeek.Thursday:
+      return "木曜日"
+    case DayOfWeek.Friday:
+      return "金曜日"
+    case DayOfWeek.Saturday:
+      return "土曜日"
+    case DayOfWeek.Sunday:
+      return "日曜日"
+    default:
+      return "未定義"
+  }
 }
 
 export default class MainScreen extends React.Component<Props, State> {
@@ -20,19 +48,42 @@ export default class MainScreen extends React.Component<Props, State> {
 
     this.state = {
       amount: 0,
-      name: "燃えるごみ",
-      amountTextPosition: 0,
+      name: "",
+      day: DayOfWeek.none,
     }
   }
 
   async componentDidMount() {
     try {
-      setInterval(async () => {
-        const amount = await ApiClient.getAmount()
-        this.setState({
-          amount,
-        })
-      }, 1000)
+      // setInterval(async () => {
+      //   const amount = await ApiClient.getAmount()
+      //   this.setState({
+      //     amount,
+      //   })
+      // }, 1000)
+      let name = await AsyncStorage.getItem("name")
+      let day = await AsyncStorage.getItem("day")
+      if (name === null) name = "未設定"
+      if (day === null) day = DayOfWeek.none.toString()
+      this.setState({
+        name: name,
+        day: parseInt(day),
+      })
+    } catch (err) {
+      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
+    }
+  }
+
+  changeSetting = async () => {
+    try {
+      let name = await AsyncStorage.getItem("name")
+      let day = await AsyncStorage.getItem("day")
+      if (name === null) name = "未設定"
+      if (day === null) day = DayOfWeek.none.toString()
+      this.setState({
+        name: name,
+        day: parseInt(day),
+      })
     } catch (err) {
       Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
     }
@@ -69,21 +120,9 @@ export default class MainScreen extends React.Component<Props, State> {
           <View style={{ flex: 1 }}>
             <Text style={styles.nameText}>{this.state.name}</Text>
           </View>
-          <View
-            style={{ flex: 3 }}
-            onLayout={event => {
-              this.setState({
-                amountTextPosition: event.nativeEvent.layout.height / 2,
-              })
-            }}
-          >
+          <View style={{ flex: 2 }}>
             <Image source={img_dustbox} style={imgStyles.dustBoxImg} />
-            <Text
-              style={[
-                styles.amountText,
-                { marginTop: this.state.amountTextPosition },
-              ]}
-            >
+            <Text style={[styles.amountText, { marginTop: 180 }]}>
               {this.state.amount * 20 + "%"}
             </Text>
           </View>
@@ -92,7 +131,9 @@ export default class MainScreen extends React.Component<Props, State> {
               transparent
               large
               onPress={() => {
-                this.props.navigation.navigate("Setting")
+                this.props.navigation.navigate("Setting", {
+                  changeSetting: this.changeSetting,
+                })
               }}
               success
               style={{ marginTop: 40, alignSelf: "center", height: 100 }}
