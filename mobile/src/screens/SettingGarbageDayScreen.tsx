@@ -12,9 +12,7 @@ import {
   Right,
   Left,
   Body,
-  Button,
   Picker,
-  Switch,
 } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import ApiClient from "../libs/ApiClient"
@@ -111,6 +109,7 @@ export default class SettingGarbageDayScreen extends React.Component<
       <Container>
         <Content>
           <List>
+            <Separator bordered />
             <ListItem>
               <Left>
                 <Text>ゴミ捨て日</Text>
@@ -133,7 +132,15 @@ export default class SettingGarbageDayScreen extends React.Component<
                 </Picker>
               </Right>
             </ListItem>
-            <Separator bordered />
+            <Separator />
+            <Separator style={{ paddingBottom: 20 }}>
+              <Text style={{ fontSize: 15 }}>
+                お住いの地域のゴミ捨て日がわからない場合は
+              </Text>
+              <Text style={{ fontSize: 15 }}>
+                郵便番号・住所から取得することも可能です。
+              </Text>
+            </Separator>
             <ListItem>
               <Body>
                 <Text>郵便番号</Text>
@@ -142,7 +149,7 @@ export default class SettingGarbageDayScreen extends React.Component<
                 <Input
                   style={{ width: 90 }}
                   maxLength={7}
-                  onEndEditing={e => this.getAddress(e.nativeEvent.text)}
+                  onChangeText={text => this.getAddress(text)}
                 />
               </Right>
             </ListItem>

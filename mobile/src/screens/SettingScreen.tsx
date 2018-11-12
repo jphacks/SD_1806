@@ -1,5 +1,5 @@
 import React from "react"
-import { AsyncStorage, Alert } from "react-native"
+import { AsyncStorage, Alert, TouchableOpacity } from "react-native"
 import {
   Container,
   Content,
@@ -9,16 +9,15 @@ import {
   List,
   ListItem,
   Separator,
-  Body,
   Right,
   Left,
-  Button,
   Picker,
   Switch,
 } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import Setting from "../interface/Setting"
 import DayOfWeek from "../libs/DayOfWeek"
+import { dayOfWeekToString } from "../libs/Module"
 
 interface State {
   setting: Setting
@@ -204,15 +203,17 @@ export default class SettingScreen extends React.Component<Props, State> {
               <Left>
                 <Text>ゴミ捨て日</Text>
               </Left>
-              <Right>
-                <Button
-                  transparent
+              <Right
+                style={{ flexDirection: "row-reverse", alignItems: "center" }}
+              >
+                <TouchableOpacity
                   onPress={() => {
                     this.props.navigation.navigate("SettingGarbageDay")
                   }}
                 >
-                  <Icon name="arrow-forward" />
-                </Button>
+                  <Icon style={{ marginLeft: 20 }} name="arrow-forward" />
+                </TouchableOpacity>
+                <Text>{dayOfWeekToString(this.state.setting.garbageDay)}</Text>
               </Right>
             </ListItem>
 
