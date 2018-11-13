@@ -11,6 +11,8 @@ import { NavigationScreenProp } from "react-navigation"
 import ApiClient from "../libs/ApiClient"
 import Color from "../libs/Color"
 import DayOfWeek from "../libs/DayOfWeek"
+import Swiper from "react-native-swiper"
+import SmellScreen from "../screens/SmellScreen"
 
 interface State {
   amount: number
@@ -94,34 +96,45 @@ export default class MainScreen extends React.Component<Props, State> {
         break
     }
     return (
-      <Container>
-        <Content style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.nameText}>{this.state.name}</Text>
-          </View>
-          <View style={{ flex: 2 }}>
-            <Image source={img_dustbox} style={imgStyles.dustBoxImg} />
-            <Text style={[styles.amountText, { marginTop: 180 }]}>
-              {this.state.amount * 20 + "%"}
-            </Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Button
-              transparent
-              large
-              onPress={() => {
-                this.props.navigation.navigate("Setting", {
-                  changeSetting: this.changeSetting,
-                })
-              }}
-              success
-              style={{ marginTop: 40, alignSelf: "center", height: 100 }}
-            >
-              <Icon name="settings" style={{ fontSize: 100 }} />
-            </Button>
-          </View>
-        </Content>
-      </Container>
+      <Swiper
+        index={1}
+        loop={false}
+        showsButtons={false}
+        showsPagination={true}
+        // paginationStyle={{ ...ifIphoneX({ bottom: 16 }, { bottom: 10 }) }}
+        activeDotColor={Color.main}
+        // ref={swiper => (this.swiper = swiper)}
+      >
+        <SmellScreen navigation={this.props.navigation} />
+        <Container>
+          <Content style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.nameText}>{this.state.name}</Text>
+            </View>
+            <View style={{ flex: 2 }}>
+              <Image source={img_dustbox} style={imgStyles.dustBoxImg} />
+              <Text style={[styles.amountText, { marginTop: 180 }]}>
+                {this.state.amount * 20 + "%"}
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Button
+                transparent
+                large
+                onPress={() => {
+                  this.props.navigation.navigate("Setting", {
+                    changeSetting: this.changeSetting,
+                  })
+                }}
+                success
+                style={{ marginTop: 40, alignSelf: "center", height: 100 }}
+              >
+                <Icon name="settings" style={{ fontSize: 100 }} />
+              </Button>
+            </View>
+          </Content>
+        </Container>
+      </Swiper>
     )
   }
 }
