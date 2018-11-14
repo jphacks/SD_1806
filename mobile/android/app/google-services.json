@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "195402021245",
+    "firebase_url": "https://gomi-26595.firebaseio.com",
+    "project_id": "gomi-26595",
+    "storage_bucket": "gomi-26595.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195402021245:android:1e80bea0ff974202",
+        "android_client_info": {
+          "package_name": "com.jonghelper.gomi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195402021245-oko9olhr9lqo9uqklo0d6c2764lq7vma.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAU48UGEBwVe014mWkxk2kUTUcSwy7BIEw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
