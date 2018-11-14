@@ -1,12 +1,23 @@
 import React from "react"
-import { Image, Alert } from "react-native"
-import { Container, Content, Button, Icon, Text } from "native-base"
+import {
+  Image,
+  ImageStyle,
+  StyleSheet,
+  Alert,
+  AsyncStorage,
+} from "react-native"
+import { Container, Content, Button, Icon, Text, View, Col } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import ApiClient from "../libs/ApiClient"
+import Color from "../libs/Color"
+import DayOfWeek from "../libs/DayOfWeek"
+import Swiper from "react-native-swiper"
+import SmellScreen from "../screens/SmellScreen"
 
 interface State {
   amount: number
   name: string
+  day: DayOfWeek
 }
 interface Props {
   navigation: NavigationScreenProp<any>
@@ -18,18 +29,42 @@ export default class MainScreen extends React.Component<Props, State> {
 
     this.state = {
       amount: 0,
-      name: "燃えるごみ",
+      name: "",
+      day: DayOfWeek.none,
     }
   }
 
   async componentDidMount() {
     try {
-      setInterval(async () => {
-        const amount = await ApiClient.getAmount()
-        this.setState({
-          amount,
-        })
-      }, 1000)
+      // setInterval(async () => {
+      //   const amount = await ApiClient.getAmount()
+      //   this.setState({
+      //     amount,
+      //   })
+      // }, 1000)
+      let name = await AsyncStorage.getItem("name")
+      let day = await AsyncStorage.getItem("day")
+      if (name === null) name = "未設定"
+      if (day === null) day = DayOfWeek.none.toString()
+      this.setState({
+        name: name,
+        day: parseInt(day),
+      })
+    } catch (err) {
+      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
+    }
+  }
+
+  changeSetting = async () => {
+    try {
+      let name = await AsyncStorage.getItem("name")
+      let day = await AsyncStorage.getItem("day")
+      if (name === null) name = "未設定"
+      if (day === null) day = DayOfWeek.none.toString()
+      this.setState({
+        name: name,
+        day: parseInt(day),
+      })
     } catch (err) {
       Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
     }
@@ -60,57 +95,79 @@ export default class MainScreen extends React.Component<Props, State> {
         img_dustbox = require("../assets/dustbox.png")
         break
     }
-
     return (
-      <Container>
-        <Content>
-          <Text
-            style={{
-              color: "#5cb85c",
-              alignSelf: "center",
-              justifyContent: "center",
-              fontSize: 60,
-              fontWeight: "bold",
-              marginTop: 30,
-            }}
-          >
-            {this.state.name}
-          </Text>
-          <Image
-            source={img_dustbox}
-            style={{
-              width: 300,
-              height: 300,
-              marginTop: 50,
-              alignSelf: "center",
-              tintColor: "#5cb85c",
-            }}
-          />
-          <Text
-            style={{
-              color: "#addbad",
-              position: "absolute",
-              alignSelf: "center",
-              fontSize: 60,
-              fontWeight: "bold",
-              marginTop: 290,
-            }}
-          >
-            {this.state.amount * 20 + "%"}
-          </Text>
-          <Button
-            transparent
-            large
-            onPress={() => {
-              this.props.navigation.navigate("Setting")
-            }}
-            success
-            style={{ marginTop: 40, alignSelf: "center", height: 100 }}
-          >
-            <Icon name="settings" style={{ fontSize: 100 }} />
-          </Button>
-        </Content>
-      </Container>
+      <Swiper
+        index={1}
+        loop={false}
+        showsButtons={false}
+        showsPagination={true}
+        activeDotColor={Color.main}
+      >
+        <SmellScreen
+          navigation={this.props.navigation}
+          name={this.state.name}
+        />
+        <Container>
+          <Content style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.nameText}>{this.state.name}</Text>
+            </View>
+            <View style={{ flex: 2 }}>
+              <Image source={img_dustbox} style={imgStyles.dustBoxImg} />
+              <Text style={[styles.amountText, { marginTop: 180 }]}>
+                {this.state.amount * 20 + "%"}
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Button
+                transparent
+                large
+                onPress={() => {
+                  this.props.navigation.navigate("Setting", {
+                    changeSetting: this.changeSetting,
+                  })
+                }}
+                success
+                style={{ marginTop: 40, alignSelf: "center", height: 100 }}
+              >
+                <Icon name="settings" style={{ fontSize: 100 }} />
+              </Button>
+            </View>
+          </Content>
+        </Container>
+      </Swiper>
     )
   }
 }
+
+interface ImgStyles {
+  dustBoxImg: ImageStyle
+}
+
+const imgStyles = StyleSheet.create<ImgStyles>({
+  dustBoxImg: {
+    flex: 1,
+    width: undefined,
+    height: undefined,
+    tintColor: Color.main,
+    resizeMode: "contain",
+  },
+})
+
+const styles = StyleSheet.create({
+  nameText: {
+    color: Color.main,
+    alignSelf: "center",
+    fontSize: 60,
+    fontWeight: "bold",
+    marginTop: 30,
+  },
+  amountText: {
+    color: Color.secandary,
+    position: "absolute",
+    alignSelf: "center",
+    marginTop: 0,
+    fontSize: 60,
+    fontWeight: "bold",
+  },
+})
