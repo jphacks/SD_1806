@@ -1,14 +1,8 @@
 import React from "react"
-import {
-  StyleSheet,
-  Alert,
-  AsyncStorage,
-  Image,
-  ImageStyle,
-} from "react-native"
+import { StyleSheet, Alert, Image, ImageStyle } from "react-native"
 import { Container, Content, Text, View, Col, Row } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
-import { Bar, Circle } from "react-native-progress"
+import { Circle } from "react-native-progress"
 import ApiClient from "../libs/ApiClient"
 import Color from "../libs/Color"
 
@@ -16,6 +10,7 @@ interface State {
   smell: number
 }
 interface Props {
+  name: string
   navigation: NavigationScreenProp<any>
 }
 
@@ -32,8 +27,14 @@ const smellText = [
   "このままですと室内に悪臭が広がる可能性があります。ゴミの量が少なくとも交換することが推奨されます。",
 ]
 
+const smellColor = [
+  Color.goodSmell,
+  Color.normalSmell,
+  Color.badSmell,
+  Color.yabaiSmell,
+]
+
 export default class Screen extends React.Component<Props, State> {
-  private name = ""
   constructor(props: Props) {
     super(props)
 
@@ -52,21 +53,12 @@ export default class Screen extends React.Component<Props, State> {
           smell,
         })
       }, 100)
-      let storeName = await AsyncStorage.getItem("name")
-      if (storeName === null) storeName = "未設定"
-      this.name = storeName
     } catch (err) {
       Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
     }
   }
 
   render() {
-    let smellColor: string[] = [
-      Color.goodSmell,
-      Color.normalSmell,
-      Color.badSmell,
-      Color.yabaiSmell,
-    ]
     let smellLevel: number
     if (this.state.smell < 0.25) smellLevel = 0
     else if (this.state.smell < 0.5) smellLevel = 1
@@ -87,13 +79,12 @@ export default class Screen extends React.Component<Props, State> {
               source={require("../assets/smell_icon.png")}
               style={imgStyles.smellIcon}
             />
-            <Text style={styles.mainText}>{this.name + "のにおい"}</Text>
+            <Text style={styles.mainText}>{this.props.name + "のにおい"}</Text>
           </Row>
           <View
             style={{
               padding: 5,
               alignItems: "center",
-              //   justifyContent: "center",
             }}
           >
             <Circle
@@ -114,16 +105,7 @@ export default class Screen extends React.Component<Props, State> {
             </Text>
           </View>
           <View style={{ flex: 4, margin: 5, marginTop: 10 }}>
-            <View
-              style={{
-                alignItems: "center",
-                borderColor: Color.border,
-                borderWidth: 5,
-                borderRadius: 10,
-                paddingVertical: 30,
-                paddingHorizontal: 10,
-              }}
-            >
+            <View style={styles.descriptionView}>
               <Text style={[styles.mainText]}>{smellTitle[smellLevel]}</Text>
               <Text style={styles.descriptionText}>
                 {smellText[smellLevel]}
@@ -167,5 +149,13 @@ const styles = StyleSheet.create({
     lineHeight: 25,
     fontSize: 18,
     marginTop: 10,
+  },
+  descriptionView: {
+    alignItems: "center",
+    borderColor: Color.border,
+    borderWidth: 5,
+    borderRadius: 10,
+    paddingVertical: 30,
+    paddingHorizontal: 10,
   },
 })

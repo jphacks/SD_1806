@@ -101,11 +101,12 @@ export default class MainScreen extends React.Component<Props, State> {
         loop={false}
         showsButtons={false}
         showsPagination={true}
-        // paginationStyle={{ ...ifIphoneX({ bottom: 16 }, { bottom: 10 }) }}
         activeDotColor={Color.main}
-        // ref={swiper => (this.swiper = swiper)}
       >
-        <SmellScreen navigation={this.props.navigation} />
+        <SmellScreen
+          navigation={this.props.navigation}
+          name={this.state.name}
+        />
         <Container>
           <Content style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
