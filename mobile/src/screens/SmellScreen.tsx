@@ -1,8 +1,14 @@
 import React from "react"
-import { StyleSheet, Alert, AsyncStorage } from "react-native"
-import { Container, Content, Button, Icon, Text, View, Col } from "native-base"
+import {
+  StyleSheet,
+  Alert,
+  AsyncStorage,
+  Image,
+  ImageStyle,
+} from "react-native"
+import { Container, Content, Text, View, Col, Row } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
-import { Circle } from "react-native-progress"
+import { Bar, Circle } from "react-native-progress"
 import ApiClient from "../libs/ApiClient"
 import Color from "../libs/Color"
 
@@ -12,6 +18,19 @@ interface State {
 interface Props {
   navigation: NavigationScreenProp<any>
 }
+
+const smellTitle = [
+  "ほとんどにおいません",
+  "中島のおなら",
+  "まだ大丈夫ですが要注意",
+  "すぐに交換しましょう",
+]
+const smellText = [
+  "このままですと室内に悪臭が広がる可能性があります。ゴミの量が少なくとも交換することが推奨されます。",
+  "このままですと室内に悪臭が広がる可能性があります。ゴミの量が少なくとも交換することが推奨されます。",
+  "このままですと室内に悪臭が広がる可能性があります。ゴミの量が少なくとも交換することが推奨されます。",
+  "このままですと室内に悪臭が広がる可能性があります。ゴミの量が少なくとも交換することが推奨されます。",
+]
 
 export default class Screen extends React.Component<Props, State> {
   private name = ""
@@ -27,11 +46,12 @@ export default class Screen extends React.Component<Props, State> {
     try {
       let smell = 0
       setInterval(async () => {
-        smell += 0.01
+        if (smell > 1) smell = 0
+        else smell += 0.01
         this.setState({
           smell,
         })
-      }, 1000)
+      }, 100)
       let storeName = await AsyncStorage.getItem("name")
       if (storeName === null) storeName = "未設定"
       this.name = storeName
@@ -41,50 +61,74 @@ export default class Screen extends React.Component<Props, State> {
   }
 
   render() {
-    let smellColor: string
-    if (this.state.smell < 0.25) smellColor = Color.goodSmell
-    else if (this.state.smell < 0.5) smellColor = Color.normalSmell
-    else if (this.state.smell < 0.75) smellColor = Color.badSmell
-    else smellColor = Color.yabaiSmell
+    let smellColor: string[] = [
+      Color.goodSmell,
+      Color.normalSmell,
+      Color.badSmell,
+      Color.yabaiSmell,
+    ]
+    let smellLevel: number
+    if (this.state.smell < 0.25) smellLevel = 0
+    else if (this.state.smell < 0.5) smellLevel = 1
+    else if (this.state.smell < 0.75) smellLevel = 2
+    else smellLevel = 3
 
     return (
       <Container>
         <Content style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
-          <View
+          <Row
             style={{
-              flex: 1,
-              justifyContent: "center",
               alignItems: "center",
+              justifyContent: "center",
+              marginHorizontal: 10,
             }}
           >
-            <Text style={styles.mainText}>{this.name + "のにおい指数"}</Text>
-          </View>
+            <Image
+              source={require("../assets/smell_icon.png")}
+              style={imgStyles.smellIcon}
+            />
+            <Text style={styles.mainText}>{this.name + "のにおい"}</Text>
+          </Row>
           <View
             style={{
-              flex: 3,
-              justifyContent: "center",
+              padding: 5,
               alignItems: "center",
+              //   justifyContent: "center",
             }}
           >
             <Circle
               animated={true}
-              color={smellColor}
-              size={250}
-              thickness={20}
+              color={smellColor[smellLevel]}
+              size={220}
+              thickness={30}
               progress={this.state.smell}
               showsText={true}
-              formatText={progress => `${Math.round(progress * 100)}`}
+              textStyle={{
+                fontWeight: "bold",
+                fontSize: 40,
+              }}
+              formatText={progress => `${Math.round(progress * 100)}%`}
             />
+            <Text style={[styles.levelText, { color: smellColor[smellLevel] }]}>
+              Lv. {smellLevel + 1}
+            </Text>
           </View>
-          <View style={{ flex: 3, alignItems: "center" }}>
-            <Text
-              style={[styles.mainText, { color: smellColor, marginTop: 10 }]}
+          <View style={{ flex: 4, margin: 5, marginTop: 10 }}>
+            <View
+              style={{
+                alignItems: "center",
+                borderColor: Color.border,
+                borderWidth: 5,
+                borderRadius: 10,
+                paddingVertical: 30,
+                paddingHorizontal: 10,
+              }}
             >
-              においやばい
-            </Text>
-            <Text style={styles.descriptionText}>
-              このままですと室内に悪臭が立ち込める可能性があるので、ゴミの量が少なくとも交換することが推奨されます。
-            </Text>
+              <Text style={[styles.mainText]}>{smellTitle[smellLevel]}</Text>
+              <Text style={styles.descriptionText}>
+                {smellText[smellLevel]}
+              </Text>
+            </View>
           </View>
         </Content>
       </Container>
@@ -92,17 +136,36 @@ export default class Screen extends React.Component<Props, State> {
   }
 }
 
+interface ImgStyles {
+  smellIcon: ImageStyle
+}
+
+const imgStyles = StyleSheet.create<ImgStyles>({
+  smellIcon: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
+    tintColor: Color.main,
+    resizeMode: "contain",
+  },
+})
+
 const styles = StyleSheet.create({
+  levelText: {
+    color: Color.text,
+    fontSize: 50,
+    fontWeight: "bold",
+    marginTop: 20,
+  },
   mainText: {
     color: Color.text,
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: "bold",
   },
   descriptionText: {
     color: Color.textSecandary,
-    lineHeight: 20,
+    lineHeight: 25,
     fontSize: 18,
     marginTop: 10,
-    marginHorizontal: 15,
   },
 })
