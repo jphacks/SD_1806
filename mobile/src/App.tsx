@@ -15,7 +15,7 @@ export default class App extends React.Component<Props> {
   private pushNotification = new PushNotification()
 
   async componentDidMount() {
-    this.pushNotification.requestPermission()
+    this.pushNotification.setup()
   }
 
   componentWillUnmount() {

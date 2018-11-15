@@ -43,4 +43,16 @@ export default class ApiClient {
     console.log(jsonData)
     return jsonData
   }
+
+  static async setToken(token: string) {
+    const url: string = "https://sugoigomibako.herokuapp.com/token"
+    const fd = new FormData()
+    fd.append("token", token)
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "multipart/form-data" },
+      body: fd,
+    })
+    if (response.ok) throw "Failed to POST config."
+  }
 }
