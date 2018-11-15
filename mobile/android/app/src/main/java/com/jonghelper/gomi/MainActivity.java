@@ -1,4 +1,4 @@
-package com.gomiclient;
+package com.jonghelper.gomi;
 
 import com.facebook.react.ReactActivity;
 
