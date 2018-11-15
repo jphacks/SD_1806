@@ -54,10 +54,10 @@
 		99D80E46219A999C0099D613 /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 99D80E1E219A99600099D613 /* libART.a */; };
 		A420B206FF2746DFBFD24696 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6789FE7BA62E482396C902B6 /* Roboto_medium.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
+		BA8A3CFFA5AB886AE048A74E /* libPods-GomiClient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 260B7CF33B0C5653414ACD37 /* libPods-GomiClient.a */; };
 		BBEDC3FD6C25E7E3FF1FDE94 /* libPods-GomiClient-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 81B9AEEDA926EA178260A777 /* libPods-GomiClient-tvOS.a */; };
-		DABA037CFE3178422CC6281D /* Pods_GomiClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 793B2AAA201976912E607DE4 /* Pods_GomiClient.framework */; };
 		DC1124CB367B415E92335A7D /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 85F6A20CDCED43688D94BC89 /* libRNFirebase.a */; };
-		E264CB653E6F104B5131E878 /* Pods_GomiClientTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63515360AFC5163CC2C11724 /* Pods_GomiClientTests.framework */; };
+		DC2AA811CECADB9FC3E58D3D /* libPods-GomiClientTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EC82A1972BF1DECD778AD4F /* libPods-GomiClientTests.a */; };
 		EBBD2D27749A4BB0ACF424EA /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC156BE732AF4473A420291C /* SimpleLineIcons.ttf */; };
 /* End PBXBuildFile section */
 
@@ -381,6 +381,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = GomiClient/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		1B288FDAF811AC0CD8C3A6DC /* libPods-GomiClient-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GomiClient-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		260B7CF33B0C5653414ACD37 /* libPods-GomiClient.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GomiClient.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E47B1E0B4A5D006451C7 /* GomiClient-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GomiClient-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* GomiClient-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GomiClient-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -392,16 +393,15 @@
 		5ADD05E8219C3D0600E2B4BF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "GomiClient/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		5F8C1BE6974B483CBDE22933 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
-		63515360AFC5163CC2C11724 /* Pods_GomiClientTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GomiClientTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6789FE7BA62E482396C902B6 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		6A37676B5D054855A7D5DE6E /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
-		793B2AAA201976912E607DE4 /* Pods_GomiClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GomiClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D8C30C9E1354975955FCAC2 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
 		7DAC000D8E1A39119E3BA376 /* Pods-GomiClientTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GomiClientTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GomiClientTests/Pods-GomiClientTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81B9AEEDA926EA178260A777 /* libPods-GomiClient-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GomiClient-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		85F6A20CDCED43688D94BC89 /* libRNFirebase.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFirebase.a; sourceTree = "<group>"; };
+		8EC82A1972BF1DECD778AD4F /* libPods-GomiClientTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GomiClientTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9059AAFE27609E3088C5507A /* Pods-GomiClient-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GomiClient-tvOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-GomiClient-tvOSTests/Pods-GomiClient-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		92147B28600C4D4AADABD251 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		99D80E18219A99600099D613 /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
@@ -424,7 +424,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */,
-				E264CB653E6F104B5131E878 /* Pods_GomiClientTests.framework in Frameworks */,
+				DC2AA811CECADB9FC3E58D3D /* libPods-GomiClientTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,7 +446,7 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				DC1124CB367B415E92335A7D /* libRNFirebase.a in Frameworks */,
-				DABA037CFE3178422CC6281D /* Pods_GomiClient.framework in Frameworks */,
+				BA8A3CFFA5AB886AE048A74E /* libPods-GomiClient.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -623,8 +623,8 @@
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				81B9AEEDA926EA178260A777 /* libPods-GomiClient-tvOS.a */,
 				1B288FDAF811AC0CD8C3A6DC /* libPods-GomiClient-tvOSTests.a */,
-				793B2AAA201976912E607DE4 /* Pods_GomiClient.framework */,
-				63515360AFC5163CC2C11724 /* Pods_GomiClientTests.framework */,
+				260B7CF33B0C5653414ACD37 /* libPods-GomiClient.a */,
+				8EC82A1972BF1DECD778AD4F /* libPods-GomiClientTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -785,7 +785,6 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				8206A29C0506E5C815A45208 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1332,32 +1331,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
-		};
-		8206A29C0506E5C815A45208 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-GomiClient/Pods-GomiClient-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GomiClient/Pods-GomiClient-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		8FF55F6380591CFAE14E019C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
