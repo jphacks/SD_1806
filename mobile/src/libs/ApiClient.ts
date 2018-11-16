@@ -1,4 +1,6 @@
-const API_ROOT = "https://jonghelper.com/gomi/"
+import Setting from "../interface/Setting"
+
+const API_ROOT = "https://sugoigomibako.herokuapp.com/"
 
 export default class ApiClient {
   //   static async postConfig(ku: string, kana1: string, kana2: string, ): Promise<void> {}
@@ -8,19 +10,33 @@ export default class ApiClient {
     const response = await fetch(url)
     if (!response.ok) throw "Failed to GET amount."
     const jsonData = await response.json()
-    return jsonData.amount
+    return jsonData[0].amount
   }
 
-  static async postConfigID(id: string): Promise<void> {
+  static async getAmountTotal(): Promise<number> {
+    const url: string = API_ROOT + "amount/total"
+    const response = await fetch(url)
+    if (!response.ok) throw "Failed to GET total amount."
+    const jsonData = await response.json()
+    console.log(jsonData)
+    return jsonData[0].amount
+  }
+
+  static async getSmell(): Promise<number> {
+    const url: string = API_ROOT + "smell"
+    const response = await fetch(url)
+    if (!response.ok) throw "Failed to GET smell."
+    const jsonData = await response.json()
+    return jsonData[0].smell
+  }
+
+  static async postConfig(setting: Setting): Promise<void> {
     const url: string = API_ROOT + "config"
     const fd = new FormData()
-    fd.append("collection", id)
-    fd.append("name", "燃えるごみ")
-    fd.append("category", "katei")
-    fd.append("notify_for_today", "1")
-    fd.append("notify_for_tomorrow", "1")
-    fd.append("notification_time_for_today", "07:00")
-    fd.append("notification_time_for_tomorrow", "19:00")
+    fd.append("name", setting.name)
+    fd.append("notification", "t")
+    // fd.append("nth", "1,3")
+    fd.append("weekday", setting.notificationDay.toString())
 
     const response = await fetch(url, {
       method: "POST",
