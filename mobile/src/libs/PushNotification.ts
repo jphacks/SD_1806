@@ -1,5 +1,6 @@
 import firebase from "react-native-firebase"
 import ApiClient from "./ApiClient"
+import { Alert } from "react-native"
 
 export default class PushNotification {
   private onTokenRefreshListener: any
@@ -10,12 +11,12 @@ export default class PushNotification {
 
   async setup() {
     if (await this.checkPermission()) {
-      this.setupToken()
-      this.setupListener()
+      await this.setupToken()
+      await this.setupListener()
     } else {
       if (await this.requestPermission()) {
-        this.setupToken()
-        this.setupListener()
+        await this.setupToken()
+        await this.setupListener()
       }
     }
   }
@@ -25,30 +26,18 @@ export default class PushNotification {
   }
 
   async requestPermission() {
-    const enabled = await firebase.messaging().hasPermission()
-    if (enabled) {
-      firebase
-        .messaging()
-        .getToken()
-        .then(token => {
-          console.log("TOKEN Generated", token)
-        })
-    } else {
-      console.log("Permission denied")
-      await firebase.messaging().requestPermission()
-    }
-    return enabled
+    return await firebase.messaging().requestPermission()
   }
 
-  private setupToken = () => {
+  private setupToken = async () => {
     // デバイストークンを取得
-    firebase
-      .messaging()
-      .getToken()
-      .then(fcmToken => {
-        console.log(fcmToken)
-        ApiClient.setToken(fcmToken)
-      })
+    const token = await firebase.messaging().getToken()
+    await ApiClient.setToken(token)
+    // Alert.alert("setupToken")
+  }
+
+  private setupListener = async () => {
+    // Alert.alert("setupListener")
 
     // 新しいトークンの生成がされた時
     this.onTokenRefreshListener = firebase
@@ -57,9 +46,7 @@ export default class PushNotification {
         console.log(fcmToken)
         ApiClient.setToken(fcmToken)
       })
-  }
 
-  private setupListener = async () => {
     // ① プッシュ通知を押してクローズからの起動
     const notificationOpen = await firebase
       .notifications()
@@ -79,15 +66,16 @@ export default class PushNotification {
     this.notificationListener = firebase
       .notifications()
       .onNotification(notification => {
-        console.log(notification)
-        // notification.setSound("default")
+        notification.setSound("default")
         firebase.notifications().displayNotification(notification)
       })
   }
 
   releaseListener = () => {
     if (!this.checkPermission()) return
-    this.onTokenRefreshListener()
+    if (this.onTokenRefreshListener != undefined) {
+      this.onTokenRefreshListener()
+    }
     this.notificationOpenedListener()
     this.notificationListener()
   }
