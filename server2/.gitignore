@@ -10,3 +10,4 @@ pip-selfcheck.json
 collection.json
 config.json
 fcmconfig.json
+data_local.sh

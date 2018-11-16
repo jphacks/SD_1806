@@ -8,7 +8,7 @@ import numpy as np, datetime, json, os
 
 AMOUNT_THRESHOLD = 3
 SMELL_THRESHOLD = 500
-NOTIFICATION_TIME = "07:00"
+BASE_URL = 'https://sugoigomibako.herokuapp.com/'
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -20,6 +20,7 @@ app.config['JSON_AS_ASCII'] = False
 
 FCM_API_KEY = os.environ.get('FCM_API_KEY') 
 notifier = FCMNotifier(FCM_API_KEY) if FCM_API_KEY else None
+ntimer = NotificationTimer(BASE_URL)
 
 class Amount(db.Model):
     recorded = db.Column('recorded', db.DateTime(), primary_key=True, default=dt.now)
@@ -68,12 +69,13 @@ class Smell(db.Model):
         return [{'recorded': row.recorded, 'smell': row.smell} for row in rows]
 
 class Config(db.Model):
-    lineup = ['name', 'nth', 'weekday', 'notification']
+    lineup = ['name', 'nth', 'weekday', 'notification', 'time']
     configs = None
-    name = db.Column('name', db.String(20), primary_key=True, default="普通ゴミ")
-    nth = db.Column('nth', db.String(10), nullable=True)
-    weekday = db.Column('weekday', db.String(10), nullable=True)
-    notification = db.Column('notification', db.String(1), default="1")
+    name = db.Column(lineup[0], db.String(20), primary_key=True, default="普通ゴミ")
+    nth = db.Column(lineup[1], db.String(10), nullable=True)
+    weekday = db.Column(lineup[2], db.String(10), nullable=True)
+    notification = db.Column(lineup[3], db.String(1), default="1")
+    time = db.Column(lineup[4], db.String(5), default="07:00")
 
     def __init__(self, configs):
         self.configs = configs
@@ -149,6 +151,8 @@ def config():
     elif request.method == 'POST':        
         Config(request.form).change()
         if notifier and 'name' in request.form.keys(): notifier.set_name(request.form['name'])
+        if ntimer and 'time' in request.form.keys(): 
+            ntimer.set_time(request.form['time']).start()
         response = jsonify({'registered config': Config.get()})
     return response
 
@@ -185,11 +189,13 @@ def test_notify():
     return response
 
 if __name__ == '__main__': 
-    if os.environ.get('RESET_DB_BY_DEPLOY'):
+    if os.environ.get('RESET_DB_BY_DEPLOY') == '1':
         db.drop_all()
         db.create_all()
     if notifier:
-        if Config.get(): notifier.set_name(Config.get()['name'])
         notifier.set_token(Token.get())
-    NotificationTimer(NOTIFICATION_TIME).start()
+    config = Config.get()
+    if config:
+        if notifier: notifier.set_name(config['name'])
+        ntimer.set_time(config['time']).start()
     app.run()

@@ -1,4 +1,5 @@
 from pyfcm import FCMNotification
+from datetime import datetime
 import time, requests, schedule, threading
 
 class FCMNotifier():
@@ -31,17 +32,35 @@ class FCMNotifier():
         return self.notify(self.MESSAGE_SMELL)
 
 class NotificationTimer():
-    def __init__(self, time):
+    def __init__(self, url):
+        self.url = url
+        self.thread = None
+        self.active = True
+    
+    def set_time(self, time):
         self.time = time
+        return self
+    
+    def set_base_url(self, url):
+        self.url = url
+        return url
 
     def notify_everyday(self):
-        print(requests.get('https://sugoigomibako.herokuapp.com/notify').json())
+        print(datetime.now(), requests.get(self.url + 'notify').json())
 
     def notify_thread(self):
         schedule.every().day.at(self.time).do(self.notify_everyday)
-        while True:
+        while self.active:
             schedule.run_pending()
             time.sleep(1)
     
     def start(self):
-        threading.Thread(target=self.notify_thread).start()
+        self.stop()
+        self.thread = threading.Thread(target=self.notify_thread)
+        self.thread.start()
+
+    def stop(self):
+        if self.thread:
+            self.active = False
+            self.thread.join()
+            self.active = True
