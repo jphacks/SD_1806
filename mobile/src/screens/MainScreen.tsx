@@ -109,7 +109,10 @@ export default class MainScreen extends React.Component<Props, State> {
           name={this.state.name}
         />
         <Container>
-          <Content style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
+          <Content
+            style={{ flex: 1, marginBottom: 50 }}
+            contentContainerStyle={{ flex: 1 }}
+          >
             <View style={{ flex: 1 }}>
               <Text style={styles.nameText}>{this.state.name}</Text>
             </View>

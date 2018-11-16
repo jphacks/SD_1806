@@ -67,7 +67,10 @@ export default class Screen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Content style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
+        <Content
+          style={{ flex: 1, marginBottom: 50 }}
+          contentContainerStyle={{ flex: 1 }}
+        >
           <Row
             style={{
               alignItems: "center",
