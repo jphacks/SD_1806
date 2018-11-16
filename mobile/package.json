@@ -11,6 +11,7 @@
     "native-base": "^2.8.1",
     "react": "16.6.0-alpha.8af6728",
     "react-native": "0.57.3",
+    "react-native-chart-kit": "^1.2.0",
     "react-native-firebase": "^5.1.0",
     "react-native-progress": "^3.5.0",
     "react-native-swiper": "^1.5.13",

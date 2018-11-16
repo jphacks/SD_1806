@@ -13,6 +13,7 @@ import Color from "../libs/Color"
 import DayOfWeek from "../libs/DayOfWeek"
 import Swiper from "react-native-swiper"
 import SmellScreen from "../screens/SmellScreen"
+import ChartScreen from "../screens/ChartScreen"
 
 interface State {
   amount: number
@@ -108,7 +109,10 @@ export default class MainScreen extends React.Component<Props, State> {
           name={this.state.name}
         />
         <Container>
-          <Content style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
+          <Content
+            style={{ flex: 1, marginBottom: 50 }}
+            contentContainerStyle={{ flex: 1 }}
+          >
             <View style={{ flex: 1 }}>
               <Text style={styles.nameText}>{this.state.name}</Text>
             </View>
@@ -135,6 +139,10 @@ export default class MainScreen extends React.Component<Props, State> {
             </View>
           </Content>
         </Container>
+        <ChartScreen
+          navigation={this.props.navigation}
+          name={this.state.name}
+        />
       </Swiper>
     )
   }
