@@ -11,3 +11,4 @@ collection.json
 config.json
 fcmconfig.json
 data_local.sh
+data_public_test.sh

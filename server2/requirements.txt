@@ -10,7 +10,7 @@ itsdangerous==1.1.0
 Jinja2==2.10
 MarkupSafe==1.0
 numpy==1.15.4
-psycopg2==2.7.6.1
+psycopg2-binary==2.7.6.1
 pushbullet.py==0.11.0
 pyfcm==1.4.5
 python-magic==0.4.15
