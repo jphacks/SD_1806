@@ -19,12 +19,15 @@ def tomorrow():
 def datetime_to_nth_weekday(dt):
     nth = int( (dt.day - 1) / 7 ) + 1
     weekday = dt.weekday()
+
     return nth, weekday
 
 def isCollectionDay(nth, weekday, target_day):
     tg_nth, tg_weekday = datetime_to_nth_weekday(target_day)
+    
     is_nth = not nth or str(tg_nth) in nth
     is_weekday = not weekday or str(tg_weekday) in weekday
+
     return is_nth and is_weekday
 
 def todayIsCollectionDay(nth, weekday):
