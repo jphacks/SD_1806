@@ -10,7 +10,7 @@ const AppNavigator = createStackNavigator({
   Main: {
     screen: Main,
     navigationOptions: () => ({
-      title: "Gomi",
+      title: "すごいゴミ箱（仮）",
     }),
   },
   Setting: {
