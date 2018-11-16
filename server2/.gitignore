@@ -1,0 +1,12 @@
+__pycache__/
+bin/
+include/
+lib/
+Scripts/
+pip-selfcheck.json
+*.cfg
+*.db
+.DS_Store
+collection.json
+config.json
+fcmconfig.json
