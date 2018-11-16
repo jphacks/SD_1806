@@ -13,6 +13,7 @@ import Color from "../libs/Color"
 import DayOfWeek from "../libs/DayOfWeek"
 import Swiper from "react-native-swiper"
 import SmellScreen from "../screens/SmellScreen"
+import ChartScreen from "../screens/ChartScreen"
 
 interface State {
   amount: number
@@ -135,6 +136,10 @@ export default class MainScreen extends React.Component<Props, State> {
             </View>
           </Content>
         </Container>
+        <ChartScreen
+          navigation={this.props.navigation}
+          name={this.state.name}
+        />
       </Swiper>
     )
   }
