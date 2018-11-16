@@ -13,7 +13,7 @@ DEBUG = True
 CONFIG_FILE = 'config.json'
 FCM_CONFIG_FILE = 'fcmconfig.json'
 COLLECTION_FILE = 'collection.json'
-FCM_API_KEY = 'AAAArmykXJ0:APA91bEAJvzYXSW-2E9wc4jnAGiey4o4cZPSLTmenno95vBTyB5uj0rLZTHkXmZ9eAiyTnwcD3JVSKv1RL-16Fb7ts7-4K4RDiG0U3I470jFdbX7FiH9ZIp3Xsz8dluhcfP9_KHNIKRA'
+FCM_API_KEY = ''
 GOMIBAKO_THRESHOLD = 4
 
 push_service = FCMNotification(FCM_API_KEY)
