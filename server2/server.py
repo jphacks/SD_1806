@@ -120,7 +120,22 @@ class Token(db.Model):
         
 @app.route('/')
 def index():
-    return jsonify({'Health Check': 'すごいゴミ箱のAPIです．'})
+    msg = 'すごいゴミ箱のAPIです．'
+
+    if os.environ.get('RESET_DB_BY_INIT') == '1':
+        print('reset DB', db.drop_all())
+        msg = 'DBを初期化しました．'
+    
+    db.create_all()
+
+    if notifier: 
+        notifier.set_token(Token.get())
+    config = Config.get()
+    if config:
+        if notifier: notifier.set_name(config['name'])
+        ntimer.set_time(config['time']).start()
+
+    return jsonify({'Init Server': msg})
 
 @app.route('/amount', methods=['GET', 'POST'])
 def amount():
@@ -140,8 +155,9 @@ def smell():
         response = jsonify(Smell.latest(request.args.get('limit') or 1))
     elif request.method == 'POST':
         response = jsonify({'registered smell': Smell(request.form['smell']).add()})
-        if notifier and Config.get()['notification'] and Smell.latest()[0]['smell'] >= SMELL_THRESHOLD: 
-            notifier.smell()
+        config = Config.get()
+        if not notifier or not config or not config['notification']: return response
+        if Smell.latest()[0]['smell'] >= SMELL_THRESHOLD: notifier.smell()
     return response
 
 @app.route('/config', methods=['GET', 'POST'])
@@ -161,14 +177,17 @@ def token():
     if request.method == 'GET':
         response = jsonify(Token.get() or "no token")
     if request.method == 'POST':
-        Token(request.form['token'] if 'token' in request.form.keys() else None).change()
+        Token(request.form['token']).change()
+        if notifier: notifier.set_token(Token.get())
         response = jsonify('registered token')
     return response
 
 @app.route('/notify')
 def notify():
-    name, nth, weekday, notification = Config.get().values()
     response = jsonify("no notification")
+    config = Config.get()
+    if not config: return response
+    name, nth, weekday, notification, _ = config.values()
     if notifier and notification and Amount.latest() and Amount.latest()[0]['amount'] >= AMOUNT_THRESHOLD:
         if todayIsCollectionDay(nth, weekday):
             notifier.today()
@@ -183,19 +202,10 @@ def test_notify():
     if notifier and Token.get():
         msg = request.args.get('msg') or "これはテスト通知です．"
         notifier.notify(msg)
-        response = jsonify({'notification': 'notify', 'msg': msg, 'API_KEY': FCM_API_KEY, 'token': Token.get()})
+        response = jsonify({'msg': msg, 'API_KEY': FCM_API_KEY, 'token': Token.get()})
     else:
-        response = jsonify({'notification': 'no notification'})
+        response = jsonify('no notification')
     return response
 
-if __name__ == '__main__': 
-    if os.environ.get('RESET_DB_BY_DEPLOY') == '1':
-        db.drop_all()
-        db.create_all()
-    if notifier:
-        notifier.set_token(Token.get())
-    config = Config.get()
-    if config:
-        if notifier: notifier.set_name(config['name'])
-        ntimer.set_time(config['time']).start()
+if __name__ == '__main__':
     app.run()

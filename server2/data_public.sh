@@ -18,5 +18,5 @@ curl -X POST -d "smell=500" https://sugoigomibako.herokuapp.com/smell
 curl -X POST -d "smell=150" https://sugoigomibako.herokuapp.com/smell
 curl -X POST -d "smell=800" https://sugoigomibako.herokuapp.com/smell
 
-curl -X POST -d "name=プラごみ&nth=13&weekday=56" https://sugoigomibako.herokuapp.com/config
+curl -X POST -d "name=plastic" https://sugoigomibako.herokuapp.com/config
 curl -X POST -d "token=abcdefg" https://sugoigomibako.herokuapp.com/token

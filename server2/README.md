@@ -15,7 +15,7 @@ Windowsは`$ Script\activate` でactivateする
 
 |エンドポイント|メソッド|パラメータ|説明|
 |:--|:--|:--|:--|
-|/|GET|なし|ヘルスチェック，応答確認用API|
+|/|GET|なし|サーバ初期化，及び 応答確認用API．デプロイ後最初にアクセスすること．|
 |/amount|GET|limit(デフォルト:1)|0~4の5段階で表されるゴミの量の最新のログを取得する．limitパラメータで取得件数を指定できる．|
 |/amount|POST|amount|ゴミの量のログを追加する．|
 |/amount/total|GET|なし|当月の総ゴミ排出量を算出する．|
@@ -37,8 +37,9 @@ Windowsは`$ Script\activate` でactivateする
 *2: プッシュ通知が行われるには，以下の条件が最低限必要になる．
 1. Herokuに環境変数`FCM_API_KEY`が設定されている．
 2. Configのtokenが設定されている．
+3. Configのnotificationが空でない．
 
-*3: プッシュ通知が行われるには，(*2)の条件に加えて以下のいずれかの条件がある．
+*3: プッシュ通知が行われるには，(*2)の条件に加えて以下の条件がある．
 1. ゴミの量の最新のログが3以上である．
 2. 今日がゴミ収集日である．
 3. 明日がゴミ収集日である．
@@ -64,6 +65,10 @@ $ git remote add heroku git@heroku.com:sugoigomibako.git
 $ git add .
 $ git commit -m "commit comment"
 $ git push heroku master
+
+うまくいかなければ
+$ heroku keys:add
+$ git push heroku master -f
 ```
 
 これで[https://sugoigomibako.herokuapp.com/](https://sugoigomibako.herokuapp.com/)へアクセスするとデプロイが適用されている．
