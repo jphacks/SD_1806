@@ -1,12 +1,14 @@
 import React from "react"
-import { StyleSheet, Dimensions, Image, ImageStyle } from "react-native"
+import { StyleSheet, Dimensions, Image, ImageStyle, Alert } from "react-native"
 import { Container, Content, Button, Icon, Text, View, Col } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import ApiClient from "../libs/ApiClient"
 import Color from "../libs/Color"
 import { LineChart } from "react-native-chart-kit"
 
-interface State {}
+interface State {
+  totalAmount: number
+}
 interface Props {
   name: string
   navigation: NavigationScreenProp<any>
@@ -36,12 +38,22 @@ export default class ChartScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
 
-    this.state = {}
+    this.state = {
+      totalAmount: 0,
+    }
   }
 
   async componentDidMount() {
     try {
-    } catch (err) {}
+      setInterval(async () => {
+        const totalAmount = await ApiClient.getAmountTotal()
+        this.setState({
+          totalAmount,
+        })
+      }, 1000)
+    } catch (err) {
+      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
+    }
   }
 
   render() {
@@ -61,7 +73,9 @@ export default class ChartScreen extends React.Component<Props, State> {
                   source={require("../assets/gomi_black.png")}
                   style={imgStyles.dustImg}
                 />
-                <Text style={styles.amountText}>50L</Text>
+                <Text style={styles.amountText}>
+                  {this.state.totalAmount} L
+                </Text>
               </View>
             </View>
           </View>

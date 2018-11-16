@@ -24,6 +24,15 @@ interface Props {
   navigation: NavigationScreenProp<any>
 }
 
+const dustBoxImages = [
+  require("../assets/dustbox.png"),
+  require("../assets/dustbox_20.png"),
+  require("../assets/dustbox_40.png"),
+  require("../assets/dustbox_60.png"),
+  require("../assets/dustbox_80.png"),
+  require("../assets/dustbox_100.png"),
+]
+
 export default class MainScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -37,12 +46,12 @@ export default class MainScreen extends React.Component<Props, State> {
 
   async componentDidMount() {
     try {
-      // setInterval(async () => {
-      //   const amount = await ApiClient.getAmount()
-      //   this.setState({
-      //     amount,
-      //   })
-      // }, 1000)
+      setInterval(async () => {
+        const amount = await ApiClient.getAmount()
+        this.setState({
+          amount,
+        })
+      }, 1000)
       let name = await AsyncStorage.getItem("name")
       let day = await AsyncStorage.getItem("day")
       if (name === null) name = "未設定"
@@ -72,30 +81,6 @@ export default class MainScreen extends React.Component<Props, State> {
   }
 
   render() {
-    let img_dustbox
-    switch (this.state.amount) {
-      case 0:
-        img_dustbox = require("../assets/dustbox.png")
-        break
-      case 1:
-        img_dustbox = require("../assets/dustbox_20.png")
-        break
-      case 2:
-        img_dustbox = require("../assets/dustbox_40.png")
-        break
-      case 3:
-        img_dustbox = require("../assets/dustbox_60.png")
-        break
-      case 4:
-        img_dustbox = require("../assets/dustbox_80.png")
-        break
-      case 5:
-        img_dustbox = require("../assets/dustbox_100.png")
-        break
-      default:
-        img_dustbox = require("../assets/dustbox.png")
-        break
-    }
     return (
       <Swiper
         index={1}
@@ -117,7 +102,10 @@ export default class MainScreen extends React.Component<Props, State> {
               <Text style={styles.nameText}>{this.state.name}</Text>
             </View>
             <View style={{ flex: 2 }}>
-              <Image source={img_dustbox} style={imgStyles.dustBoxImg} />
+              <Image
+                source={dustBoxImages[this.state.amount]}
+                style={imgStyles.dustBoxImg}
+              />
               <Text style={[styles.amountText, { marginTop: 180 }]}>
                 {this.state.amount * 20 + "%"}
               </Text>
