@@ -53,6 +53,6 @@ export default class ApiClient {
       headers: { "Content-Type": "multipart/form-data" },
       body: fd,
     })
-    if (response.ok) throw "Failed to POST config."
+    if (!response.ok) throw "Failed to POST config."
   }
 }
