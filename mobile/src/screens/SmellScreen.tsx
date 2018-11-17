@@ -16,15 +16,15 @@ interface Props {
 
 const smellTitle = [
   "ほとんどにおいません",
-  "中島のおなら",
   "まだ大丈夫ですが要注意",
   "すぐに交換しましょう",
+  "中島のおなら",
 ]
 const smellText = [
+  "においはほとんどしません。この調子でゴミ箱内を清潔に保ちましょう。",
+  "まだ大丈夫ですが、放置しているとにおいが悪化する可能性があります。においの変化には注意を払いましょう",
   "このままですと室内に悪臭が広がる可能性があります。ゴミの量が少なくとも交換することが推奨されます。",
-  "このままですと室内に悪臭が広がる可能性があります。ゴミの量が少なくとも交換することが推奨されます。",
-  "このままですと室内に悪臭が広がる可能性があります。ゴミの量が少なくとも交換することが推奨されます。",
-  "このままですと室内に悪臭が広がる可能性があります。ゴミの量が少なくとも交換することが推奨されます。",
+  "うちのチームの中島君のおならと同程度の悪臭です。人体に影響を及ぼす可能性があります。直ちに交換しましょう。",
 ]
 
 const smellColor = [
@@ -44,24 +44,26 @@ export default class Screen extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    try {
-      // let smell = 0
-      // setInterval(async () => {
-      //   if (smell > 1) smell = 0
-      //   else smell += 0.01
-      //   this.setState({
-      //     smell,
-      //   })
-      // }, 100)
-      setInterval(async () => {
+    // let smell = 0
+    // setInterval(async () => {
+    //   if (smell > 1) smell = 0
+    //   else smell += 0.01
+    //   this.setState({
+    //     smell,
+    //   })
+    // }, 100)
+    setInterval(async () => {
+      try {
         const smell = await ApiClient.getSmell()
         this.setState({
-          smell,
+          smell: smell / 1013,
         })
-      }, 1000)
-    } catch (err) {
-      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
-    }
+      } catch (err) {
+        this.setState({
+          smell: 0,
+        })
+      }
+    }, 1000)
   }
 
   render() {
