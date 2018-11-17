@@ -7,7 +7,6 @@ import requests
 import threading
 import spidev
 import RPi.GPIO as GPIO
-import pygame.mixer
 import sys
 import os
 
@@ -21,9 +20,6 @@ post_amount_interval = 1.1
 
 threshold = 500
 smell_val = 0
-
-pygame.mixer.init()
-pygame.mixer.music.load("/home/pi/data/kussa.wav")
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(17,GPIO.OUT)
@@ -78,7 +74,6 @@ class SmellThread(threading.Thread):
         except KeyboardInterrupt:
             pass
 
-        pygame.mixer.music.stop()
         spi.close()
 
 def cleanup():
