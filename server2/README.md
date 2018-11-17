@@ -16,9 +16,9 @@ Windowsは`$ Script\activate` でactivateする
 |エンドポイント|メソッド|パラメータ|説明|
 |:--|:--|:--|:--|
 |/|GET|なし|ヘルスチェック|
-|/amount|GET|limit(デフォルト:1)|0~4の5段階で表されるゴミの量の最新のログを取得する．limitパラメータで取得件数を指定できる．|
-|/amount|POST|amount|ゴミの量のログを追加する．|
-|/amount/total|GET|なし|当月の総ゴミ排出量を算出する．|
+|/amount|GET|limit(デフォルト:1)|0~5の6段階で表されるゴミの量の最新のログを取得する．limitパラメータで取得件数を指定できる．|
+|/amount|POST|amount, datetime(`YYYY-MM-DD hh:mm:ss`形式，デフォルトはPOSTした時間)|ゴミの量のログを追加する．|
+|/amount/total|GET|limit|今月を含め，limit月前まで，各月の総ゴミ排出量を算出する．|
 |/smell|GET|limit(デフォルト:1)|0〜1013で表されるゴミの臭いの強さの最新のログを取得する．limitパラメータで取得件数を指定できる．|
 |/smell|POST|smell|ゴミの臭いの強さのログを追加する．(*2)の条件に加え，(*3)の2を満たしている場合，push通知を行う．|
 |/config|GET|なし|現在の設定情報を取得する．設定の種類は(*1)を参照|
@@ -27,7 +27,7 @@ Windowsは`$ Script\activate` でactivateする
 |/collection|GET|id, sorting_id|住所IDとゴミ分類ID(*4)を指定することで，第何何曜日が改修日かを得る．|
 |/collection/search|GET|(*5)|住所を検索し，住所IDと住所名を得る．|
 |/notify|GET|なし|条件(*2)に加え，(*3)の1and(2or3)を満たしている場合，プッシュ通知を行う．|
-|/notify/test|GET|msg(デフォルト:これはテスト通知です．)|条件(*2)を満たしていればプッシュ通知を行う．|
+|/notify/test|GET|title(デフォルト:すごいゴミ箱), msg(デフォルト:これはテスト通知です．)|条件(*2)を満たしていればプッシュ通知を行う．|
 
 *1: 設定ファイルには，以下に示すものが含まれる
 - name: ゴミ箱につける名前
@@ -42,7 +42,7 @@ Windowsは`$ Script\activate` でactivateする
 3. Configのnotificationが空でない．
 
 *3: プッシュ通知が行われるには，(*2)の条件に加えて以下の条件がある．
-1. ゴミの量の最新のログが3以上である．
+1. ゴミの量の最新のログが4以上である．
 2. 今日がゴミ収集日である．
 3. 明日がゴミ収集日である．
 4. ゴミの臭いの強さの最新のログが500以上である．
@@ -96,7 +96,7 @@ $ git push heroku master -f
 ## テーブル仕様
 - Amount: ゴミの総量のログを記録するテーブル
     - recorded: 記録時間
-    - amount: ゴミの量，0~4
+    - amount: ゴミの量，0~5
 - Smell: ゴミの臭いの強さのログを記録するテーブル
     - recorded: 記録時間
     - smell: ゴミの臭いの強さ，0~1013
