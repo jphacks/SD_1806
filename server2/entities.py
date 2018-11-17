@@ -20,8 +20,9 @@ class Entities:
             recorded = db.Column('recorded', db.DateTime(), primary_key=True, default=dt.now)
             amount = db.Column('amount', db.Integer(), default='0', nullable=False)
 
-            def __init__(self, amount):
+            def __init__(self, amount, datetime=None):
                 self.amount = amount
+                if datetime: self.recorded = datetime
 
             def add(self):
                 session.add(self)
@@ -37,19 +38,29 @@ class Entities:
                 return amounts
             
             @classmethod
-            def total_this_month(cls):
+            def total_monthly(cls, months=1):
+                totals = []
                 now = dt.now()
-                this_month = datetime.date(now.year, now.month, 1)
 
-                rows = cls.query.filter(cls.recorded > this_month).all()
-                rows = np.array([amount.amount for amount in rows])
+                for i in range(months):
+                    # yearまたぎめんどい問題
+                    # 月跨いだ時の計算めんどい問題
 
-                zero_idx = np.where(rows == 0)[0]
-                full_idx = zero_idx[zero_idx != 0] - 1
+                    this_month = datetime.date(now.year, now.month-i, 1)
+                    next_month = datetime.date(now.year, now.month-i+1, 1)
 
-                total = rows[full_idx].sum() + rows[-1]
-                
-                return int(total)
+                    rows = cls.query.filter(cls.recorded >= this_month).filter(cls.recorded < next_month).all()
+                    rows = np.array([amount.amount for amount in rows])
+
+                    zero_idx = np.where(rows == 0)[0]
+                    full_idx = zero_idx[zero_idx != 0] - 1
+
+                    total = rows[full_idx].sum() + rows[-1]
+                    totals.append({'month': now.month-i, 'total': int(total)})
+
+                totals.reverse()
+                import pdb; pdb.set_trace()
+                return totals
 
         return Amount
 
