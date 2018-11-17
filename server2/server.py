@@ -2,11 +2,12 @@ from flask import Flask, request, jsonify
 from entities import Entities
 from notification import FCMNotifier, NotificationTimer
 from collection_day_checker import todayIsCollectionDay, tomorrowIsCollectionDay
+from datetime import datetime
 import os
 
 DEBUG = True
 
-AMOUNT_THRESHOLD = 3
+AMOUNT_THRESHOLD = 4
 SMELL_THRESHOLD = 500
 
 BASE_URL = os.environ.get('BASE_URL')
@@ -48,7 +49,13 @@ def amount():
 
     if request.method == 'POST':
         amount = int(request.form['amount'])
-        response = jsonify({'registered amount': Amount(amount).add()})
+        dt = None
+
+        if 'datetime' in request.form:
+            dt = request.form['datetime']
+            dt = datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
+
+        response = jsonify({'registered amount': Amount(amount, dt).add(), 'registered time': dt})
     
     return response
 
@@ -56,8 +63,16 @@ def amount():
 
 @app.route('/amount/total')
 def amount_total():
-    return jsonify(Amount.total_this_month())
+    limit = request.args.get('limit') or 1
+    return jsonify(Amount.total_monthly(int(limit)))
 
+
+
+def smell_notification():
+    smells = Smell.latest(2)
+    if  notifier and len(smells) > 1 and \
+        smells[0]['smell'] >= SMELL_THRESHOLD and smells[1]['smell'] < SMELL_THRESHOLD: 
+        notifier.smell()
 
 
 @app.route('/smell', methods=['GET', 'POST'])
@@ -69,9 +84,7 @@ def smell():
     if request.method == 'POST':
         smell = int(request.form['smell'])
         response = jsonify({'registered smell': Smell(smell).add()})
-
-        if notifier and smell >= SMELL_THRESHOLD: 
-            notifier.smell()
+        smell_notification()
     
     return response
 
@@ -165,14 +178,14 @@ def notify():
     
     if notifier and amount and amount[0]['amount'] >= AMOUNT_THRESHOLD:
             
-        if todayIsCollectionDay(nth, weekday):
-            if notifier.today():
-                response = jsonify("notify for today")
-        
         if tomorrowIsCollectionDay(nth, weekday):
             if notifier.tomorrow():
                 response = jsonify("notify for tomorrow")
-    
+
+        elif todayIsCollectionDay(nth, weekday):
+            if notifier.today():
+                response = jsonify("notify for today")
+
     return response
 
 
@@ -183,9 +196,10 @@ def test_notify():
     
     if notifier:
         msg = request.args.get('msg') or "これはテスト通知です．"
-
-        if notifier.notify(msg):
+        title = request.args.get('title') or "すごいゴミ箱"
+        if notifier.notify(title, msg):
             response = jsonify({
+                'title': title,
                 'msg': msg, 
                 'api_key': FCM_API_KEY, 
                 'token': Token.get()

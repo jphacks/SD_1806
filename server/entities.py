@@ -42,7 +42,7 @@ class Entities:
                 totals = []
                 now = dt.now()
 
-                for i in range(min(months, now.month)):
+                for i in range(months):
                     # yearまたぎめんどい問題
                     # 月跨いだ時の計算めんどい問題
 
@@ -55,10 +55,11 @@ class Entities:
                     zero_idx = np.where(rows == 0)[0]
                     full_idx = zero_idx[zero_idx != 0] - 1
 
-                    total = rows[full_idx].sum() + (rows[-1] if len(rows) > 0 else 0)
+                    total = rows[full_idx].sum() + rows[-1]
                     totals.append({'month': now.month-i, 'total': int(total)})
 
                 totals.reverse()
+                import pdb; pdb.set_trace()
                 return totals
 
         return Amount
