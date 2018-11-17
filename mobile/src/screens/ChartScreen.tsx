@@ -44,16 +44,18 @@ export default class ChartScreen extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    try {
-      setInterval(async () => {
+    setInterval(async () => {
+      try {
         const totalAmount = await ApiClient.getAmountTotal()
         this.setState({
           totalAmount,
         })
-      }, 1000)
-    } catch (err) {
-      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
-    }
+      } catch (err) {
+        this.setState({
+          totalAmount: 0,
+        })
+      }
+    }, 1000)
   }
 
   render() {

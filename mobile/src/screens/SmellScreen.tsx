@@ -44,24 +44,26 @@ export default class Screen extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    try {
-      // let smell = 0
-      // setInterval(async () => {
-      //   if (smell > 1) smell = 0
-      //   else smell += 0.01
-      //   this.setState({
-      //     smell,
-      //   })
-      // }, 100)
-      setInterval(async () => {
+    // let smell = 0
+    // setInterval(async () => {
+    //   if (smell > 1) smell = 0
+    //   else smell += 0.01
+    //   this.setState({
+    //     smell,
+    //   })
+    // }, 100)
+    setInterval(async () => {
+      try {
         const smell = await ApiClient.getSmell()
         this.setState({
           smell: smell / 1013,
         })
-      }, 1000)
-    } catch (err) {
-      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
-    }
+      } catch (err) {
+        this.setState({
+          smell: 0,
+        })
+      }
+    }, 1000)
   }
 
   render() {
