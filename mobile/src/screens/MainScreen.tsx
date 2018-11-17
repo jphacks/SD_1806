@@ -45,24 +45,26 @@ export default class MainScreen extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    try {
-      setInterval(async () => {
+    setInterval(async () => {
+      try {
         const amount = await ApiClient.getAmount()
         this.setState({
           amount,
         })
-      }, 1000)
-      let name = await AsyncStorage.getItem("name")
-      let day = await AsyncStorage.getItem("day")
-      if (name === null) name = "未設定"
-      if (day === null) day = DayOfWeek.none.toString()
-      this.setState({
-        name: name,
-        day: parseInt(day),
-      })
-    } catch (err) {
-      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
-    }
+      } catch (err) {
+        this.setState({
+          amount: 0,
+        })
+      }
+    }, 1000)
+    let name = await AsyncStorage.getItem("name")
+    let day = await AsyncStorage.getItem("day")
+    if (name === null) name = "未設定"
+    if (day === null) day = DayOfWeek.none.toString()
+    this.setState({
+      name: name,
+      day: parseInt(day),
+    })
   }
 
   changeSetting = async () => {

@@ -17,12 +17,14 @@ import {
 import { NavigationScreenProp } from "react-navigation"
 import Setting from "../interface/Setting"
 import DayOfWeek from "../libs/DayOfWeek"
-import { dayOfWeekToString } from "../libs/Module"
+import { daysOfWeekToString, nthWeekToString } from "../libs/Module"
+import DateTimePicker from "react-native-modal-datetime-picker"
+import { bool } from "prop-types"
+import ApiClient from "../libs/ApiClient"
+import Color from "../libs/Color"
 
 interface State {
   setting: Setting
-  address_id: string
-  candidate: any
 }
 interface Props {
   navigation: NavigationScreenProp<any>
@@ -34,48 +36,49 @@ export default class SettingScreen extends React.Component<Props, State> {
 
     const setting: Setting = {
       name: "",
-      garbageDay: DayOfWeek.Monday,
-      notificationDay: DayOfWeek.Monday,
-      notificationTime: 0,
-      notificationSound: true,
+      garbageDays: new Array<boolean>(7).fill(false),
+      nthWeeks: new Array<boolean>(4).fill(false),
+      notification: true,
+      notificationTime: "07:00",
     }
 
     this.state = {
       setting,
-      address_id: "undefined",
-      candidate: [],
     }
   }
 
   async componentDidMount() {
     try {
       const storeName = await AsyncStorage.getItem("name")
-      const storeGarbageDay = await AsyncStorage.getItem("garbageDay")
-      const storeNotificationDay = await AsyncStorage.getItem("notificationDay")
+      const storeGarbageDays = await AsyncStorage.getItem("garbageDays")
+      const storeNthWeek = await AsyncStorage.getItem("nthWeeks")
+      const storeNotification = await AsyncStorage.getItem("notification")
       const storeNotificationTime = await AsyncStorage.getItem(
         "notificationTime"
       )
-      const storeNotificationSound = await AsyncStorage.getItem(
-        "notificationSound"
-      )
-      let name, garbageDay, notificationDay, notificationTime, notificationSound
+      let name: string
+      let garbageDays: boolean[]
+      let nthWeeks: boolean[]
+      let notification: boolean
+      let notificationTime: string
       if (storeName === null) name = ""
       else name = storeName
-      if (storeGarbageDay === null) garbageDay = DayOfWeek.Monday
-      else garbageDay = parseInt(storeGarbageDay)
-      if (storeNotificationDay === null) notificationDay = DayOfWeek.Monday
-      else notificationDay = parseInt(storeNotificationDay)
-      if (storeNotificationTime === null) notificationTime = 0
-      else notificationTime = parseInt(storeNotificationTime)
-      if (storeNotificationSound === null) notificationSound = true
-      else notificationSound = storeNotificationSound == "true"
+      if (storeGarbageDays === null)
+        garbageDays = new Array<boolean>(7).fill(false)
+      else garbageDays = storeGarbageDays.split(",").map(x => x == "true")
+      if (storeNthWeek === null) nthWeeks = new Array<boolean>(4).fill(false)
+      else nthWeeks = storeNthWeek.split(",").map(x => x == "true")
+      if (storeNotification === null) notification = true
+      else notification = storeNotification == "true"
+      if (storeNotificationTime === null) notificationTime = "07:00"
+      else notificationTime = storeNotificationTime
 
       const setting: Setting = {
         name,
-        garbageDay,
-        notificationDay,
+        garbageDays,
+        nthWeeks,
+        notification,
         notificationTime,
-        notificationSound,
       }
 
       this.setState({
@@ -102,81 +105,77 @@ export default class SettingScreen extends React.Component<Props, State> {
       }
     })
     this.props.navigation.state.params.changeSetting()
+    ApiClient.postConfig(this.state.setting)
   }
 
-  changeGarbageDay = async (day: number) => {
+  changeGarbageDays = async (day: boolean[], nthWeeks: boolean[]) => {
+    console.log("changeGarbageDays")
+    console.log(day, nthWeeks)
     try {
-      await AsyncStorage.setItem("day", day.toString())
+      await AsyncStorage.setItem("garbageDays", day.toString())
+      await AsyncStorage.setItem("nthWeeks", nthWeeks.toString())
     } catch (error) {
       Alert.alert("設定の保存に失敗しました。")
     }
     this.setState(prevState => {
       const updateSetting = {
         ...prevState.setting,
-        day: day,
+        garbageDays: day,
+        nthWeeks,
+      }
+      console.log(updateSetting)
+      return {
+        setting: updateSetting,
+      }
+    })
+    this.props.navigation.state.params.changeSetting()
+    ApiClient.postConfig(this.state.setting)
+  }
+
+  changeNotification = async (notification: boolean) => {
+    try {
+      await AsyncStorage.setItem("notification", notification.toString())
+    } catch (error) {
+      Alert.alert("設定の保存に失敗しました。")
+    }
+    this.setState(prevState => {
+      const updateSetting = {
+        ...prevState.setting,
+        notification,
       }
       return {
         setting: updateSetting,
       }
     })
     this.props.navigation.state.params.changeSetting()
+    ApiClient.postConfig(this.state.setting)
   }
 
-  changeNotificationDay = async (day: number) => {
+  changeNotificationTime = async (notificationTime: string) => {
     try {
-      await AsyncStorage.setItem("notificationDay", day.toString())
+      await AsyncStorage.setItem("notificationTime", notificationTime)
     } catch (error) {
       Alert.alert("設定の保存に失敗しました。")
     }
     this.setState(prevState => {
       const updateSetting = {
         ...prevState.setting,
-        notificationDay: day,
+        notificationTime,
       }
       return {
         setting: updateSetting,
       }
     })
-  }
-
-  changeNotificationTime = async (time: number) => {
-    try {
-      await AsyncStorage.setItem("notificationTime", time.toString())
-    } catch (error) {
-      Alert.alert("設定の保存に失敗しました。")
-    }
-    this.setState(prevState => {
-      const updateSetting = {
-        ...prevState.setting,
-        notificationTime: time,
-      }
-      return {
-        setting: updateSetting,
-      }
-    })
-  }
-
-  changeNotificationSound = async (notify: boolean) => {
-    try {
-      await AsyncStorage.setItem("notificationSound", notify.toString())
-    } catch (error) {
-      Alert.alert("設定の保存に失敗しました。")
-    }
-    this.setState(prevState => {
-      const updateSetting = {
-        ...prevState.setting,
-        notificationSound: notify,
-      }
-      return {
-        setting: updateSetting,
-      }
-    })
+    this.props.navigation.state.params.changeSetting()
+    ApiClient.postConfig(this.state.setting)
   }
 
   render() {
     let timeOptions: JSX.Element[] = []
     for (let i = 0; i < 24; i++) {
-      timeOptions.push(<Picker.Item key={i} label={i + "時"} value={i} />)
+      timeOptions.push(
+        <Picker.Item key={i} label={i + "時"} value={i.toString()} />
+      )
     }
     return (
       <Container>
@@ -192,28 +191,39 @@ export default class SettingScreen extends React.Component<Props, State> {
               <Right>
                 <Input
                   style={{ width: 200, textAlign: "right" }}
-                  placeholder="Underline Textbox"
+                  placeholder="ゴミの種類"
+                  placeholderTextColor={Color.textSecandary}
                   maxLength={10}
                   onChangeText={text => this.changeName(text)}
                   value={this.state.setting.name}
                 />
               </Right>
             </ListItem>
-            <ListItem last>
+
+            <ListItem
+              last
+              onPress={() => {
+                this.props.navigation.navigate("SettingGarbageDay", {
+                  changeGarbageDays: this.changeGarbageDays,
+                  setting: this.state.setting,
+                })
+              }}
+            >
               <Left>
-                <Text>ゴミ捨て日</Text>
+                <Text>ゴミ収集日</Text>
               </Left>
               <Right
-                style={{ flexDirection: "row-reverse", alignItems: "center" }}
+                style={{
+                  flexDirection: "row-reverse",
+                  alignItems: "center",
+                  flex: 1,
+                }}
               >
-                <TouchableOpacity
-                  onPress={() => {
-                    this.props.navigation.navigate("SettingGarbageDay")
-                  }}
-                >
-                  <Icon style={{ marginLeft: 20 }} name="arrow-forward" />
-                </TouchableOpacity>
-                <Text>{dayOfWeekToString(this.state.setting.garbageDay)}</Text>
+                <Icon style={{ marginLeft: 20 }} name="arrow-forward" />
+                <Text>
+                  {nthWeekToString(this.state.setting.nthWeeks) +
+                    daysOfWeekToString(this.state.setting.garbageDays)}
+                </Text>
               </Right>
             </ListItem>
 
@@ -222,27 +232,15 @@ export default class SettingScreen extends React.Component<Props, State> {
             </Separator>
             <ListItem>
               <Left>
-                <Text>通知曜日</Text>
+                <Text>通知</Text>
               </Left>
               <Right>
-                <Picker
-                  mode="dropdown"
-                  iosHeader="通知曜日"
-                  iosIcon={<Icon name="ios-arrow-down-outline" />}
-                  selectedValue={this.state.setting.notificationDay}
-                  onValueChange={itemValue =>
-                    this.changeNotificationDay(itemValue)
+                <Switch
+                  value={this.state.setting.notification}
+                  onValueChange={() =>
+                    this.changeNotification(!this.state.setting.notification)
                   }
-                >
-                  <Picker.Item label={"日曜日"} value={DayOfWeek.Sunday} />
-                  <Picker.Item label={"月曜日"} value={DayOfWeek.Monday} />
-                  <Picker.Item label={"火曜日"} value={DayOfWeek.Tuesday} />
-                  <Picker.Item label={"水曜日"} value={DayOfWeek.Wednesday} />
-                  <Picker.Item label={"木曜日"} value={DayOfWeek.Thursday} />
-                  <Picker.Item label={"金曜日"} value={DayOfWeek.Friday} />
-                  <Picker.Item label={"土曜日"} value={DayOfWeek.Saturday} />
-                  <Picker.Item label={"通知なし"} value={DayOfWeek.none} />
-                </Picker>
+                />
               </Right>
             </ListItem>
             <ListItem last>
@@ -261,25 +259,6 @@ export default class SettingScreen extends React.Component<Props, State> {
                 >
                   {timeOptions}
                 </Picker>
-              </Right>
-            </ListItem>
-
-            <Separator bordered>
-              <Text>音声通知設定</Text>
-            </Separator>
-            <ListItem last>
-              <Left>
-                <Text>ゴミ箱おしゃべりモード</Text>
-              </Left>
-              <Right>
-                <Switch
-                  value={this.state.setting.notificationSound}
-                  onValueChange={() =>
-                    this.changeNotificationSound(
-                      !this.state.setting.notificationSound
-                    )
-                  }
-                />
               </Right>
             </ListItem>
           </List>
