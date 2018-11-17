@@ -1,60 +1,117 @@
-# ゴミ収集日(仙台市限定)検索機能付きゴミ箱API
+# すごいゴミ箱のAPI on Heroku
 
 ## 導入
 ``` bash
-$ python -m venv server
-$ cd server
+$ python -m venv server2
+$ cd server2
 $ source bin/activate
 $ pip install -r requirements.txt
 $ python server.py
 ```
 
+Windowsは`$ Script\activate` でactivateする
+
 ## API仕様
 
 |エンドポイント|メソッド|パラメータ|説明|
 |:--|:--|:--|:--|
-|/amount|GET|なし|現在のゴミの量を取得．0~4の5段階|
-|/config|GET|なし|現在の設定ファイル(*1)の状態を取得する|
-|/config|POST|(*2)に記載|現在の設定ファイルの状態を変更する|
-|/fcmsetup|POST|id|FCMConfigに端末のIDを設定する．|
-|/collection|GET|id,ku,kana1,kana2,juusho|地域を検索し，ゴミ収集日の検索結果(*2)を返す|
-|/today|GET|なし|設定ファイルのカテゴリと収集地域IDから今日が収集日かを返す．(*4)|
-|/tomorrow|GET|なし|設定ファイルのカテゴリと収集地域IDから明日が収集日かを返す．(*4)|
-|/notify|GET|なし|条件(*5)を満たしている場合，FCMConfigの端末IDを使ってプッシュ通知を行う|
+|/|GET|なし|ヘルスチェック|
+|/amount|GET|limit(デフォルト:1)|0~5の6段階で表されるゴミの量の最新のログを取得する．limitパラメータで取得件数を指定できる．|
+|/amount|POST|amount, datetime(`YYYY-MM-DD hh:mm:ss`形式，デフォルトはPOSTした時間)|ゴミの量のログを追加する．|
+|/amount/total|GET|limit|今月を含め，limit月前まで，各月の総ゴミ排出量を算出する．|
+|/smell|GET|limit(デフォルト:1)|0〜1013で表されるゴミの臭いの強さの最新のログを取得する．limitパラメータで取得件数を指定できる．|
+|/smell|POST|smell|ゴミの臭いの強さのログを追加する．(*2)の条件に加え，(*3)の2を満たしている場合，push通知を行う．|
+|/config|GET|なし|現在の設定情報を取得する．設定の種類は(*1)を参照|
+|/config|POST|(*1)に記載|現在の設定ファイルの状態を変更する．|
+|/token|POST|token|プッシュ通知用のトークンを設定する．|
+|/collection|GET|id, sorting_id|住所IDとゴミ分類ID(*4)を指定することで，第何何曜日が改修日かを得る．|
+|/collection/search|GET|(*5)|住所を検索し，住所IDと住所名を得る．|
+|/notify|GET|なし|条件(*2)に加え，(*3)の1and(2or3)を満たしている場合，プッシュ通知を行う．|
+|/notify/test|GET|title(デフォルト:すごいゴミ箱), msg(デフォルト:これはテスト通知です．)|条件(*2)を満たしていればプッシュ通知を行う．|
 
 *1: 設定ファイルには，以下に示すものが含まれる
 - name: ゴミ箱につける名前
-- category: ゴミ箱のカテゴリ．以下の4つのいずれかを指定する
-    - katei: 家庭ゴミ
-    - pura: プラゴミ
-    - kanbin: 缶，ビン
-    - kamirui: 紙類
-- collction: 収集地域ID
-- notify_for_today: "1"の時，当日がゴミ捨ての日ならば通知する
-- notify_for_tomorrow: "1"の時，翌日がゴミ捨ての日ならば通知する
-- notification_time_for_today: 当日ゴミ捨ての通知を行う時間を設定する．例： "07:00"
-- notification_time_for_tomorrow: 翌日ゴミ捨ての通知を行う時間を設定する1．例： "19:00"
+- nth: 第何曜日が収集日かを設定する．例: 「1,2」「13」のように，第何曜日かの数字を複数設定できる．空なら毎週になる．
+- weekday: 何曜日が収集日かを設定する．例: 「0,3」「25」のように，月曜日を0とした曜日を数字で複数設定できる．空なら全ての曜日になる．
+- notification: 何かしらの文字が1文字入っていれば通知を行い，空ならば行わない．
+- time: プッシュ通知を行う時間を`HH:MM`形式で設定します．例: 「07:00」 
 
-*2: 以下のように検索を行う
-- idを指定： idが指定したidに一致する地域のゴミ収集日情報(*3)を返す
-- kuを指定： 指定した区の地域のゴミ収集日情報リストを返す
-  - kuとkana1を指定： 指定した区の中で，最初の文字がkana1である地域のゴミ収集日情報リストを返す
-    - kuとkana1とkana2を指定：　指定した区の中で，最初の文字がkana1かつ次の文字が最初の文字がkana2である地域のゴミ収集日情報リストを返す
-- juushoを指定：　住所が指定した住所に一致する地域のゴミ収集日情報を返す．
-- パラメータ指定なし
-    - configファイルにゴミ収集日情報のIDが登録されていればそのゴミ収集日情報を返す
-    - configファイルにゴミ収集日情報のIDが登録されていなければ，全てのゴミ収集日情報を返す
+*2: プッシュ通知が行われるには，以下の条件が最低限必要になる．
+1. Herokuに環境変数`FCM_API_KEY`が設定されている．
+2. Configのtokenが設定されている．
+3. Configのnotificationが空でない．
 
-*3: ゴミ収集日情報は，以下のように構成される．
-- id: id
-- kana1: 住所の1文字目のカタカナ,
-- kana2: 住所の2文字目のカタカナ,
-- juusho: 住所,
-- katei: 家庭ゴミの収集日,
-- pura: プラゴミの収集日,
-- kanbin: カン，ビンの収集日,
-- kamirui: 紙類の収集日
+*3: プッシュ通知が行われるには，(*2)の条件に加えて以下の条件がある．
+1. ゴミの量の最新のログが4以上である．
+2. 今日がゴミ収集日である．
+3. 明日がゴミ収集日である．
+4. ゴミの臭いの強さの最新のログが500以上である．
 
-*4: configも同時に返す．カテゴリか収集日が設定されていなければnullを返す．
+*4: sorting - ゴミの区分  
+- 0: 家庭ゴミ
+- 1: プラゴミ
+- 2: ビン・缶
+- 3: 紙類
 
-*5: ゴミの量が一定値を超えていて，かつ当日または翌日の通知設定がオンになっているとき通知を行う
+*5: 住所検索のキー
+- pref_id: 都道府県のID，宮城県限定なので`0`のみ
+- city_id: 市町村のID，仙台市限定なので`0`のみ
+- ku_id: 区のID 
+    - 0: 青葉区
+    - 1: 泉区
+    - 2: 太白区
+    - 3: 宮城野区
+    - 4: 若林区
+- kana1: 住所の1文字目のカタカナ
+- kana2: 住所の2文字目のカタカナ
+
+## Herokuへのデプロイ
+herokuにはmasterブランチのプッシュが必要で，リポジトリの一部のみをpushするのってめんどそうなのでフォルダにコピーしてgit initしてpushする．
+
+Heroku CLIの導入
+``` bash
+$ brew install heroku/brew/heroku
+```
+
+``` bash
+$ pwd
+/hoge/fuga/jphacks/SD_1806/
+$ cp -r server2 ../server2
+$ cd ../server2
+$ heroku login
+ログイン情報は直接伝えます．
+$ git init
+$ git remote add heroku git@heroku.com:sugoigomibako.git
+$ git add .
+$ git commit -m "commit comment"
+$ git push heroku master
+
+うまくいかなければ
+$ heroku keys:add
+$ git push heroku master -f
+```
+
+これで[https://sugoigomibako.herokuapp.com/](https://sugoigomibako.herokuapp.com/)へアクセスするとデプロイが適用されている．
+
+## テーブル仕様
+- Amount: ゴミの総量のログを記録するテーブル
+    - recorded: 記録時間
+    - amount: ゴミの量，0~5
+- Smell: ゴミの臭いの強さのログを記録するテーブル
+    - recorded: 記録時間
+    - smell: ゴミの臭いの強さ，0~1013
+- Config: ゴミ箱の設定を記録するテーブル，基本的に1行のみ
+    - name: ゴミ箱の名前
+    - nth: 第何曜日がゴミの収集日かを示す，複数の1~4の数字による文字列．nullなら毎週を示す．
+    - weekday: どの曜日がゴミ収集日かを示す，複数の0~6の数字による文字列．0は月曜を表す．nullなら全ての曜日を示す．
+    - 通知を行うかどうかを示す．空なら通知しない，そうでなければ通知をする．
+    - time: 通知を行う時間を`HH:MM`形式で指定する．デフォルトは`07:00`
+- Token: プッシュ通知用のトークンテーブル，基本的に1行のみ
+    - token: プッシュ通知用のトークン 
+- Collection: ゴミの収集日に関するテーブル
+
+テーブルのスキーマが変更になったときはリセットする．
+- まずHerokuダッシュボードのSetting -> Config Varsにある`RESET_DB_BY_INIT`を1にする
+- 変更を加えたソースコードをHerokuにプッシュする．
+- Open appすると初期化処理と一緒にテーブルリセット処理がデプロイ後初回だけ走り，変更したスキーマが適用される．
+- `RESET_DB_BY_INIT`を0に戻しておく．
