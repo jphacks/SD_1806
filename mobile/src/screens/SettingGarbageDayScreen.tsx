@@ -19,6 +19,7 @@ import { dayOfWeekToString } from "../libs/Module"
 import ApiClient from "../libs/ApiClient"
 import { number } from "prop-types"
 import Category from "../libs/Category"
+import Color from "../libs/Color"
 
 interface State {
   garbageDays: boolean[]
@@ -214,9 +215,12 @@ export default class SettingGarbageDayScreen extends React.Component<
               </Body>
               <Right style={{ flex: 1 }}>
                 <Input
-                  style={{ flex: 1 }}
-                  maxLength={7}
+                  style={{ width: 200, textAlign: "right" }}
+                  placeholder="お住いの地域の郵便番号"
+                  placeholderTextColor={Color.textSecandary}
+                  maxLength={10}
                   onChangeText={text => this.getAddress(text)}
+                  // value={this.state.text}
                 />
               </Right>
             </ListItem>

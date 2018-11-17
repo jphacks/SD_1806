@@ -194,8 +194,8 @@ export default class SettingScreen extends React.Component<Props, State> {
                   placeholder="ゴミの種類"
                   placeholderTextColor={Color.textSecandary}
                   maxLength={10}
-                  onChangeText={text => this.changeName(text)}
-                  value={this.state.setting.name}
+                  onEndEditing={e => this.changeName(e.nativeEvent.text)}
+                  defaultValue={this.state.setting.name}
                 />
               </Right>
             </ListItem>
