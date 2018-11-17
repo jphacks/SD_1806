@@ -108,6 +108,7 @@ $ git push heroku master -f
     - time: 通知を行う時間を`HH:MM`形式で指定する．デフォルトは`07:00`
 - Token: プッシュ通知用のトークンテーブル，基本的に1行のみ
     - token: プッシュ通知用のトークン 
+- Collection: ゴミの収集日に関するテーブル
 
 テーブルのスキーマが変更になったときはリセットする．
 - まずHerokuダッシュボードのSetting -> Config Varsにある`RESET_DB_BY_INIT`を1にする
