@@ -20,7 +20,6 @@ export default class ApiClient {
     const response = await fetch(url)
     if (!response.ok) throw "Failed to GET total amount."
     const jsonData = await response.json()
-    // console.log(jsonData)
     return jsonData[0].total
   }
 
