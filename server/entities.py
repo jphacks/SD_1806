@@ -59,7 +59,7 @@ class Entities:
                     totals.append({'month': now.month-i, 'total': int(total)})
 
                 totals.reverse()
-                import pdb; pdb.set_trace()
+                # import pdb; pdb.set_trace()
                 return totals
 
         return Amount
