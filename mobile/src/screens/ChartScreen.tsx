@@ -1,6 +1,6 @@
 import React from "react"
 import { StyleSheet, Dimensions, Image, ImageStyle, Alert } from "react-native"
-import { Container, Content, Button, Icon, Text, View, Col } from "native-base"
+import { Container, Content, Text, View } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import ApiClient from "../libs/ApiClient"
 import Color from "../libs/Color"
