@@ -23,6 +23,15 @@ export default class ApiClient {
     return jsonData[0].total
   }
 
+  static async getAmountLog(n: number): Promise<any> {
+    const url: string = API_ROOT + `amount/total?limit=${n}`
+    const response = await fetch(url)
+    if (!response.ok) throw "Failed to GET amount log."
+    const jsonData = await response.json()
+    console.log(jsonData)
+    return jsonData
+  }
+
   static async getSmell(): Promise<number> {
     const url: string = API_ROOT + "smell"
     const response = await fetch(url)
