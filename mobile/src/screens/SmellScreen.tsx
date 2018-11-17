@@ -44,14 +44,6 @@ export default class Screen extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    // let smell = 0
-    // setInterval(async () => {
-    //   if (smell > 1) smell = 0
-    //   else smell += 0.01
-    //   this.setState({
-    //     smell,
-    //   })
-    // }, 100)
     setInterval(async () => {
       try {
         const smell = await ApiClient.getSmell()

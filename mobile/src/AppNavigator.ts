@@ -22,13 +22,13 @@ const AppNavigator = createStackNavigator({
   SettingGarbageDay: {
     screen: SettingGarbageDay,
     navigationOptions: () => ({
-      title: "SettingGarbageDay",
+      title: "ゴミ収集日の設定",
     }),
   },
   Smell: {
     screen: Smell,
     navigationOptions: () => ({
-      title: "SettingGarbageDay",
+      title: "におい画面",
     }),
   },
 })

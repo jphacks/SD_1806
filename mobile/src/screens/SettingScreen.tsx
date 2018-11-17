@@ -16,10 +16,7 @@ import {
 } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import Setting from "../interface/Setting"
-import DayOfWeek from "../libs/DayOfWeek"
-import { daysOfWeekToString, nthWeekToString } from "../libs/Module"
-import DateTimePicker from "react-native-modal-datetime-picker"
-import { bool } from "prop-types"
+import { daysOfWeekToText, nthWeekToText } from "../libs/Module"
 import ApiClient from "../libs/ApiClient"
 import Color from "../libs/Color"
 
@@ -105,7 +102,11 @@ export default class SettingScreen extends React.Component<Props, State> {
       }
     })
     this.props.navigation.state.params.changeSetting()
-    ApiClient.postConfig(this.state.setting)
+    try {
+      ApiClient.postConfig(this.state.setting)
+    } catch (err) {
+      Alert.alert("設定の保存に失敗しました。")
+    }
   }
 
   changeGarbageDays = async (day: boolean[], nthWeeks: boolean[]) => {
@@ -129,7 +130,11 @@ export default class SettingScreen extends React.Component<Props, State> {
       }
     })
     this.props.navigation.state.params.changeSetting()
-    ApiClient.postConfig(this.state.setting)
+    try {
+      ApiClient.postConfig(this.state.setting)
+    } catch (err) {
+      Alert.alert("設定の保存に失敗しました。")
+    }
   }
 
   changeNotification = async (notification: boolean) => {
@@ -148,7 +153,11 @@ export default class SettingScreen extends React.Component<Props, State> {
       }
     })
     this.props.navigation.state.params.changeSetting()
-    ApiClient.postConfig(this.state.setting)
+    try {
+      ApiClient.postConfig(this.state.setting)
+    } catch (err) {
+      Alert.alert("設定の保存に失敗しました。")
+    }
   }
 
   changeNotificationTime = async (notificationTime: string) => {
@@ -167,7 +176,11 @@ export default class SettingScreen extends React.Component<Props, State> {
       }
     })
     this.props.navigation.state.params.changeSetting()
-    ApiClient.postConfig(this.state.setting)
+    try {
+      ApiClient.postConfig(this.state.setting)
+    } catch (err) {
+      Alert.alert("設定の保存に失敗しました。")
+    }
   }
 
   render() {
@@ -194,8 +207,8 @@ export default class SettingScreen extends React.Component<Props, State> {
                   placeholder="ゴミの種類"
                   placeholderTextColor={Color.textSecandary}
                   maxLength={10}
-                  onChangeText={text => this.changeName(text)}
-                  value={this.state.setting.name}
+                  onEndEditing={e => this.changeName(e.nativeEvent.text)}
+                  defaultValue={this.state.setting.name}
                 />
               </Right>
             </ListItem>
@@ -221,8 +234,8 @@ export default class SettingScreen extends React.Component<Props, State> {
               >
                 <Icon style={{ marginLeft: 20 }} name="arrow-forward" />
                 <Text>
-                  {nthWeekToString(this.state.setting.nthWeeks) +
-                    daysOfWeekToString(this.state.setting.garbageDays)}
+                  {nthWeekToText(this.state.setting.nthWeeks) +
+                    daysOfWeekToText(this.state.setting.garbageDays)}
                 </Text>
               </Right>
             </ListItem>

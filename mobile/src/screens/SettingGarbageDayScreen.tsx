@@ -15,10 +15,12 @@ import {
   Icon,
 } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
-import { dayOfWeekToString } from "../libs/Module"
+import { dayOfWeekToText } from "../libs/Module"
 import ApiClient from "../libs/ApiClient"
 import { number } from "prop-types"
 import Category from "../libs/Category"
+import Color from "../libs/Color"
+import { Alert } from "react-native"
 
 interface State {
   garbageDays: boolean[]
@@ -70,26 +72,30 @@ export default class SettingGarbageDayScreen extends React.Component<
   }
 
   async getAddress(zipcode: string): Promise<void> {
-    const url: string = `https://apis.postcode-jp.com/api/postcodes?general=true&normalize=false&office=true&postcode=${zipcode}&startWith=false&apiKey=CTzEFecadvquYhsEVvA4ntiIJ9kEPJGU0Uj3o5q`
+    try {
+      const url: string = `https://apis.postcode-jp.com/api/postcodes?general=true&normalize=false&office=true&postcode=${zipcode}&startWith=false&apiKey=CTzEFecadvquYhsEVvA4ntiIJ9kEPJGU0Uj3o5q`
 
-    const response = await fetch(url)
-    if (!response.ok) {
-      console.log("Failed to GET Address.")
-      return
+      const response = await fetch(url)
+      if (!response.ok) {
+        console.log("Failed to GET Address.")
+        return
+      }
+      const jsonData = await response.json()
+      if (jsonData.size == 0) return
+      const town: string = jsonData.data[0].town
+      const street = jsonData.data[0].streetFullKana
+      const wardID = wardMap[town.substr(3)]
+      const kana1 = street[0]
+      const kana2 = street[1]
+      console.log(jsonData)
+      console.log(wardID, kana1, kana2)
+      const res = await ApiClient.getCollection(wardID, kana1, kana2)
+      this.setState({
+        candidate: res,
+      })
+    } catch (err) {
+      Alert.alert("")
     }
-    const jsonData = await response.json()
-    if (jsonData.size == 0) return
-    const town: string = jsonData.data[0].town
-    const street = jsonData.data[0].streetFullKana
-    const wardID = wardMap[town.substr(3)]
-    const kana1 = street[0]
-    const kana2 = street[1]
-    console.log(jsonData)
-    console.log(wardID, kana1, kana2)
-    const res = await ApiClient.getCollection(wardID, kana1, kana2)
-    this.setState({
-      candidate: res,
-    })
   }
 
   addressChange = async (itemValue: number) => {
@@ -160,7 +166,7 @@ export default class SettingGarbageDayScreen extends React.Component<
       dayOfWeekOptions.push(
         <ListItem key={i} onPress={() => this.onPressDayOfWeekList(i)}>
           <Left>
-            <Text>{dayOfWeekToString(i)}</Text>
+            <Text>{dayOfWeekToText(i)}</Text>
           </Left>
           <Right>
             <Radio selected={this.state.garbageDays[i]} />
@@ -214,9 +220,11 @@ export default class SettingGarbageDayScreen extends React.Component<
               </Body>
               <Right style={{ flex: 1 }}>
                 <Input
-                  style={{ flex: 1 }}
+                  style={{ width: 200, textAlign: "right" }}
+                  placeholder="お住いの地域の郵便番号"
+                  placeholderTextColor={Color.textSecandary}
                   maxLength={7}
-                  onChangeText={text => this.getAddress(text)}
+                  onEndEditing={e => this.getAddress(e.nativeEvent.text)}
                 />
               </Right>
             </ListItem>
