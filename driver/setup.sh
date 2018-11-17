@@ -16,3 +16,7 @@ gpio export 5 in
 
 gpio -g mode 20 down
 gpio export 20 in
+
+# smellsensor
+gpio export 17 out
+gpio export 22 out
