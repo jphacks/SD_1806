@@ -1,6 +1,6 @@
 import React from "react"
 import { StyleSheet, Dimensions, Image, ImageStyle, Alert } from "react-native"
-import { Container, Content, Button, Icon, Text, View, Col } from "native-base"
+import { Container, Content, Text, View } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import ApiClient from "../libs/ApiClient"
 import Color from "../libs/Color"
@@ -44,16 +44,18 @@ export default class ChartScreen extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    try {
-      setInterval(async () => {
+    setInterval(async () => {
+      try {
         const totalAmount = await ApiClient.getAmountTotal()
         this.setState({
           totalAmount,
         })
-      }, 1000)
-    } catch (err) {
-      Alert.alert("通信に失敗しました。時間をおいてもう一度お試しください。")
-    }
+      } catch (err) {
+        this.setState({
+          totalAmount: 0,
+        })
+      }
+    }, 1000)
   }
 
   render() {

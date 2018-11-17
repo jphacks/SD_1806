@@ -34,9 +34,18 @@ export default class ApiClient {
     const url: string = API_ROOT + "config"
     const fd = new FormData()
     fd.append("name", setting.name)
-    fd.append("notification", "t")
-    // fd.append("nth", "1,3")
-    fd.append("weekday", setting.notificationDay.toString())
+    fd.append("notification", setting.notification ? "t" : "")
+    fd.append("time", setting.notificationTime + ":00")
+    let weekday = ""
+    for (let i = 0; i < setting.garbageDays.length; i++) {
+      if (setting.garbageDays[i]) weekday += i
+    }
+    fd.append("weekday", weekday)
+    let nth = ""
+    for (let i = 0; i < setting.nthWeeks.length; i++) {
+      if (setting.nthWeeks[i]) nth += i + 1
+    }
+    fd.append("nth", nth)
 
     const response = await fetch(url, {
       method: "POST",

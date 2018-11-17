@@ -1,9 +1,10 @@
 import DayOfWeek from "../libs/DayOfWeek"
+import { notifications } from "react-native-firebase"
 
 export default interface Setting {
   name: string
-  garbageDay: DayOfWeek
-  notificationDay: DayOfWeek
-  notificationTime: number
-  notificationSound: boolean
+  garbageDays: boolean[]
+  nthWeeks: boolean[]
+  notification: boolean
+  notificationTime: string
 }

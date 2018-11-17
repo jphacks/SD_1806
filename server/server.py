@@ -56,7 +56,7 @@ def amount():
             dt = datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
 
         response = jsonify({'registered amount': Amount(amount, dt).add(), 'registered time': dt})
-    
+
     return response
 
 
@@ -71,7 +71,7 @@ def amount_total():
 def smell_notification():
     smells = Smell.latest(2)
     if  notifier and len(smells) > 1 and \
-        smells[0]['smell'] >= SMELL_THRESHOLD and smells[1]['smell'] < SMELL_THRESHOLD: 
+        smells[0]['smell'] >= SMELL_THRESHOLD and smells[1]['smell'] < SMELL_THRESHOLD:
         notifier.smell()
 
 
@@ -85,7 +85,7 @@ def smell():
         smell = int(request.form['smell'])
         response = jsonify({'registered smell': Smell(smell).add()})
         smell_notification()
-    
+
     return response
 
 
@@ -94,28 +94,28 @@ def update(form):
     keys = form.keys()
 
     if notifier:
-        if 'name' in keys: 
+        if 'name' in keys:
             notifier.name = form['name']
-        
+
         if 'notification' in keys:
             notifier.notification = form['notification']
 
-    if 'time' in keys: 
+    if 'time' in keys:
         ntimer.time = request.form['time']
         ntimer.start()
 
 
 @app.route('/config', methods=['GET', 'POST'])
-def config(): 
+def config():
     if request.method == 'GET':
         response = jsonify(Config.get() or "no config")
 
-    if request.method == 'POST': 
+    if request.method == 'POST':
         config = Config(request.form).change()
         response = jsonify({'registered config': config})
 
         update(request.form)
-        
+
     return response
 
 
@@ -130,7 +130,7 @@ def token():
         Token(token).change()
         response = jsonify('registered token')
 
-        if notifier: 
+        if notifier:
             notifier.token = token
 
     return response
@@ -173,11 +173,11 @@ def notify():
 
     config = Config.get()
     name, nth, weekday = config['name'], config['nth'], config['weekday']
-    
+
     amount = Amount.latest()
-    
+
     if notifier and amount and amount[0]['amount'] >= AMOUNT_THRESHOLD:
-            
+
         if tomorrowIsCollectionDay(nth, weekday):
             if notifier.tomorrow():
                 response = jsonify("notify for tomorrow")
@@ -193,18 +193,18 @@ def notify():
 @app.route('/notify/test')
 def test_notify():
     response = jsonify('no notification')
-    
+
     if notifier:
         msg = request.args.get('msg') or "これはテスト通知です．"
         title = request.args.get('title') or "すごいゴミ箱"
         if notifier.notify(title, msg):
             response = jsonify({
                 'title': title,
-                'msg': msg, 
-                'api_key': FCM_API_KEY, 
+                'msg': msg,
+                'api_key': FCM_API_KEY,
                 'token': Token.get()
             })
-    
+
     return response
 
 
@@ -220,13 +220,13 @@ def initializing():
         Collection.create()
 
     config = Config.get()
-    
+
     if config:
-        if notifier: 
+        if notifier:
             notifier.notification = config['notification']
-            notifier.token = Token.get()    
+            notifier.token = Token.get()
             notifier.name = config['name']
-            
+
         ntimer.time = config['time']
         ntimer.start()
 
