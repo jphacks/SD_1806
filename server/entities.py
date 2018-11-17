@@ -201,7 +201,7 @@ class Entities:
 
             @classmethod
             def nth_weekday(cls, id=None, sorting_id=None):
-                st = getattr(cls, cls.sorting[int(sorting)])
+                st = getattr(cls, cls.sorting[int(sorting_id)])
                 cd =session.query(st).filter(cls.id == int(id)).first()
 
                 return cd2nd(cd[0])
