@@ -8,6 +8,7 @@ import { LineChart } from "react-native-chart-kit"
 
 interface State {
   totalAmount: number
+  data: any
 }
 interface Props {
   name: string
@@ -15,7 +16,7 @@ interface Props {
 }
 
 const screenWidth = Dimensions.get("window").width
-const data = {
+const initialData = {
   labels: ["1月", "2月", "3月", "4月", "5月", "6月"],
   datasets: [
     {
@@ -40,6 +41,7 @@ export default class ChartScreen extends React.Component<Props, State> {
 
     this.state = {
       totalAmount: 0,
+      data: initialData,
     }
   }
 
@@ -56,6 +58,28 @@ export default class ChartScreen extends React.Component<Props, State> {
         })
       }
     }, 1000)
+
+    try {
+      console.log("a")
+      const amountLog = await ApiClient.getAmountLog(6)
+      console.log("aaa")
+      console.log(amountLog)
+      let data = {
+        labels: [],
+        datasets: [
+          {
+            data: [],
+          },
+        ],
+      }
+      for (const elem of amountLog) {
+        data.labels.push(`${elem.month}月`)
+        data.datasets[0].data.push(elem.total)
+      }
+      this.setState({ data })
+    } catch {
+      Alert.alert("ログの取得に失敗しました。")
+    }
   }
 
   render() {
@@ -94,7 +118,7 @@ export default class ChartScreen extends React.Component<Props, State> {
                 }}
               >
                 <LineChart
-                  data={data}
+                  data={this.state.data}
                   width={screenWidth - 30}
                   height={220}
                   chartConfig={chartConfig}
