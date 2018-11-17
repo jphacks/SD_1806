@@ -50,7 +50,7 @@ export default class ChartScreen extends React.Component<Props, State> {
       try {
         const totalAmount = await ApiClient.getAmountTotal()
         this.setState({
-          totalAmount,
+          totalAmount: totalAmount * 5,
         })
       } catch (err) {
         this.setState({
@@ -74,7 +74,7 @@ export default class ChartScreen extends React.Component<Props, State> {
       }
       for (const elem of amountLog) {
         data.labels.push(`${elem.month}月`)
-        data.datasets[0].data.push(elem.total)
+        data.datasets[0].data.push(elem.total * 5)
       }
       this.setState({ data })
     } catch {
