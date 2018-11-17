@@ -18,13 +18,13 @@ class FCMNotifier():
         self.notification = '1'
 
     def notify(self, title, msg):
-        if self.token == None or self.notification in ['', '0']: 
+        if self.token == None or self.notification in ['', '0']:
             return False
-        
+
         self.ps.notify_single_device(
-            registration_id=self.token, 
-            message_body=msg, 
-            message_title=title, 
+            registration_id=self.token,
+            message_body=msg,
+            message_title=title,
             sound="Default"
         )
         print("notify")
@@ -47,7 +47,7 @@ class NotificationTimer():
         self.time = ""
         self.active = True
         self.thread = None
-    
+
     def notify_everyday(self):
         print(requests.get(self.url + 'notify').json())
 
@@ -56,7 +56,7 @@ class NotificationTimer():
         while self.active:
             schedule.run_pending()
             time.sleep(1)
-    
+
     def start(self):
         self.stop()
         self.thread = threading.Thread(target=self.notify_thread)

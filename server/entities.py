@@ -29,20 +29,20 @@ class Entities:
                 session.commit()
 
                 return self.amount
-            
+
             @classmethod
             def latest(cls, limit=None):
                 rows = cls.query.order_by(desc(cls.recorded)).limit(limit or 1).all()
                 amounts = [{'recorded': row.recorded, 'amount': row.amount} for row in rows]
 
                 return amounts
-            
+
             @classmethod
             def total_monthly(cls, months=1):
                 totals = []
                 now = dt.now()
 
-                for i in range(months):
+                for i in range(min(months, now.month)):
                     # yearまたぎめんどい問題
                     # 月跨いだ時の計算めんどい問題
 
@@ -55,20 +55,19 @@ class Entities:
                     zero_idx = np.where(rows == 0)[0]
                     full_idx = zero_idx[zero_idx != 0] - 1
 
-                    total = rows[full_idx].sum() + rows[-1]
+                    total = rows[full_idx].sum() + (rows[-1] if len(rows) > 0 else 0)
                     totals.append({'month': now.month-i, 'total': int(total)})
 
                 totals.reverse()
-                # import pdb; pdb.set_trace()
                 return totals
 
         return Amount
 
 
-    def Smell(self):        
+    def Smell(self):
         db = self.db
         session = self.session
-        
+
         class Smell(db.Model):
             recorded = db.Column('recorded', db.DateTime(), primary_key=True, default=dt.now)
             smell = db.Column('smell', db.Integer(), default='0', nullable=False)
@@ -81,7 +80,7 @@ class Entities:
                 session.commit()
 
                 return self.smell
-            
+
             @classmethod
             def latest(cls, limit=None):
                 rows = cls.query.order_by(desc(cls.recorded)).limit(limit or 1).all()
@@ -95,7 +94,7 @@ class Entities:
     def Config(self):
         db = self.db
         session = self.session
-        
+
         class Config(db.Model):
             lineup = ['name', 'nth', 'weekday', 'notification', 'time']
 
@@ -107,19 +106,19 @@ class Entities:
 
             def __init__(self, configs):
                 self.configs = configs
-                
+
                 for key in configs.keys():
                     setattr(self, key, configs[key])
-                
+
             def change(self):
                 config = self.query.first()
 
                 if config:
-                    for key in self.configs: 
+                    for key in self.configs:
                         setattr(config, key, getattr(self, key))
-                else: 
+                else:
                     session.add(self)
-                
+
                 session.commit()
 
                 return Config.get()
@@ -130,9 +129,9 @@ class Entities:
                 if not row: return None
 
                 config = {}
-                for key in cls.lineup: 
+                for key in cls.lineup:
                     config[key] = getattr(row, key)
-                
+
                 return config
 
         return Config
@@ -141,38 +140,38 @@ class Entities:
     def Token(self):
         db = self.db
         session = self.session
-        
+
         class Token(db.Model):
             token = db.Column('token', db.String(), primary_key=True)
 
             def __init__(self, token):
                 self.token = token
-            
+
             def change(self):
                 token = self.query.first()
 
-                if token: 
+                if token:
                     token.token = self.token
-                else: 
+                else:
                     session.add(self)
 
                 session.commit()
 
                 return self.token
-            
+
             @classmethod
-            def get(cls):         
+            def get(cls):
                 row = cls.query.first()
-        
+
                 return row.token if row else None
-        
+
         return Token
 
 
     def Collection(self):
         db = self.db
         session = self.session
-        
+
         class Collection(db.Model):
             sorting = ['katei', 'pura', 'kanbin', 'kamirui']
 
@@ -187,7 +186,7 @@ class Entities:
             pura = db.Column('pura', db.String(), nullable=False)
             kanbin = db.Column('kanbin', db.String(), nullable=False)
             kamirui = db.Column('kamirui', db.String(), nullable=False)
-            
+
             @classmethod
             def search(cls, pref_id=None, city_id=None, ku_id=None, kana1=None, kana2=None):
                 result = session.query(cls.id, cls.juusho)
@@ -212,5 +211,5 @@ class Entities:
                 if cls.query.first(): return
                 session.execute(cls.__table__.insert(), crawl())
                 session.commit()
-        
+
         return Collection

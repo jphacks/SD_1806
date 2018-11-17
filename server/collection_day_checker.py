@@ -52,7 +52,7 @@ def collection_day_to_nth_weekday(cd):
 
 def isCollectionDay(nth, weekday, target_day):
     tg_nth, tg_weekday = datetime_to_nth_weekday(target_day)
-    
+
     is_nth = not nth or str(tg_nth) in nth
     is_weekday = not weekday or str(tg_weekday) in weekday
 

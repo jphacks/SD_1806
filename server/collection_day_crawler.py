@@ -20,23 +20,23 @@ def crawl():
         bs = BeautifulSoup(responseHtml, 'html.parser')
 
         datatables = bs.find_all('table', attrs={"class": "datatable"})
-        
+
         ku_id = ku_list.index(url[1])
 
         for datatable_id, datatable in enumerate(datatables):
             if datatable_id == 0: continue
-            
+
             rows = datatable.find_all('tr')
-            
+
             for row_id, row in enumerate(rows):
                 if row_id == 0: continue
-                
+
                 data = row.find_all('td')
                 if data[0].find('a'):
-                    kanas = data[0].find('a').text 
+                    kanas = data[0].find('a').text
                 else:
                     kanas = data[0].text
-                
+
                 result.append({
                     'pref_id': '0',
                     'city_id': '0',
