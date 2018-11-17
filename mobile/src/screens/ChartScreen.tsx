@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     position: "absolute",
     alignSelf: "center",
-    marginTop: 80,
+    marginTop: 90,
     fontSize: 60,
     fontWeight: "bold",
   },

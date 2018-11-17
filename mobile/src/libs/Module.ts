@@ -32,4 +32,39 @@ function nthWeekToString(nth: boolean[]): string {
   return res
 }
 
-export { dayOfWeekToString, daysOfWeekToString, nthWeekToString }
+function daysOfWeekToBool(days: string): boolean[] {
+  let res = new Array<boolean>(7).fill(false)
+  console.log("dayOfWeekToBool")
+  console.log(days)
+  days = days.replace("/,/g", "")
+  for (let i = 0; i < days.length; i++) {
+    res[parseInt(days[i])] = true
+  }
+  console.log(res)
+  return res
+}
+
+function nthWeekToBool(nth: string): boolean[] {
+  let res: boolean[]
+  console.log("nthWeekToBool")
+  console.log(nth)
+  nth = nth.replace("/,/g", "")
+  if (nth) {
+    res = new Array<boolean>(4).fill(false)
+    for (let i = 0; i < nth.length; i++) {
+      res[parseInt(nth[i]) - 1] = true
+    }
+  } else {
+    res = new Array<boolean>(4).fill(true)
+  }
+  console.log(res)
+  return res
+}
+
+export {
+  dayOfWeekToString,
+  daysOfWeekToString,
+  nthWeekToString,
+  daysOfWeekToBool,
+  nthWeekToBool,
+}

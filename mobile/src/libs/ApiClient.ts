@@ -1,4 +1,6 @@
 import Setting from "../interface/Setting"
+import { iid } from "react-native-firebase"
+import { daysOfWeekToBool, nthWeekToBool } from "../libs/Module"
 
 const API_ROOT = "https://sugoigomibako.herokuapp.com/"
 
@@ -19,7 +21,7 @@ export default class ApiClient {
     if (!response.ok) throw "Failed to GET total amount."
     const jsonData = await response.json()
     // console.log(jsonData)
-    return jsonData
+    return jsonData[0].total
   }
 
   static async getSmell(): Promise<number> {
@@ -56,17 +58,33 @@ export default class ApiClient {
   }
 
   static async getCollection(
-    ku: string,
+    wardID: number,
     kn1: string,
     kn2: string
   ): Promise<any> {
     const url: string =
-      API_ROOT + `collection?ku=${ku}&kana1=${kn1}&kana2=${kn2}`
+      API_ROOT + `collection/search?ku_id=${wardID}&kana1=${kn1}&kana2=${kn2}`
     const response = await fetch(url)
     if (!response.ok) throw "Failed to GET collection."
     const jsonData = await response.json()
     console.log(jsonData)
     return jsonData
+  }
+
+  static async getCollectionDay(
+    id: number,
+    categoryId: number
+  ): Promise<{ nth: boolean[]; weekday: boolean[] }> {
+    const url: string =
+      API_ROOT + `collection?id=${id}&sorting_id=${categoryId}`
+    const response = await fetch(url)
+    if (!response.ok) throw "Failed to GET collection."
+    const jsonData = await response.json()
+    console.log(jsonData)
+    return {
+      nth: nthWeekToBool(jsonData.nth),
+      weekday: daysOfWeekToBool(jsonData.weekday),
+    }
   }
 
   static async setToken(token: string) {

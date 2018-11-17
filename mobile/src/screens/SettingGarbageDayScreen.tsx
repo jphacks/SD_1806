@@ -12,18 +12,39 @@ import {
   Body,
   Picker,
   Radio,
+  Icon,
 } from "native-base"
 import { NavigationScreenProp } from "react-navigation"
 import { dayOfWeekToString } from "../libs/Module"
+import ApiClient from "../libs/ApiClient"
+import { number } from "prop-types"
+import Category from "../libs/Category"
 
 interface State {
   garbageDays: boolean[]
   nthWeeks: boolean[]
-  // collection: number
-  // candidate: any
+  collection: number
+  candidate: any
+  category: Category
 }
 interface Props {
   navigation: NavigationScreenProp<any>
+}
+
+const wardMap: { [key: string]: number } = {
+  青葉区: 0,
+  泉区: 1,
+  太白区: 2,
+  宮城野区: 3,
+  若林区: 4,
+}
+
+const categoryList = ["家庭ゴミ", "プラスチック", "カン・ビン", "紙類"]
+const categoryOptions: JSX.Element[] = []
+for (let i = 0; i < 4; i++) {
+  categoryOptions.push(
+    <Picker.Item key={i} label={categoryList[i]} value={i} />
+  )
 }
 
 export default class SettingGarbageDayScreen extends React.Component<
@@ -35,48 +56,68 @@ export default class SettingGarbageDayScreen extends React.Component<
 
     const garbageDays = this.props.navigation.state.params.setting.garbageDays
     const nthWeeks = this.props.navigation.state.params.setting.nthWeeks
+    const collection = 0
+    const candidate: any = []
+    const category = 0
 
     this.state = {
       garbageDays,
       nthWeeks,
+      collection,
+      candidate,
+      category,
     }
   }
 
-  // async getAddress(zipcode: string): Promise<void> {
-  //   const url: string = `https://apis.postcode-jp.com/api/postcodes?general=true&normalize=false&office=true&postcode=${zipcode}&startWith=false&apiKey=CTzEFecadvquYhsEVvA4ntiIJ9kEPJGU0Uj3o5q`
+  async getAddress(zipcode: string): Promise<void> {
+    const url: string = `https://apis.postcode-jp.com/api/postcodes?general=true&normalize=false&office=true&postcode=${zipcode}&startWith=false&apiKey=CTzEFecadvquYhsEVvA4ntiIJ9kEPJGU0Uj3o5q`
 
-  //   const response = await fetch(url)
-  //   if (!response.ok) throw "Failed to GET Address."
-  //   const jsonData = await response.json()
-  //   const town = jsonData.data[0].town
-  //   const street = jsonData.data[0].streetFullKana
-  //   const ku = town.substr(3)
-  //   const kana1 = street[0]
-  //   const kana2 = street[1]
-  //   await ApiClient.getCollection(ku, kana1, kana2)
-  //   const res = await ApiClient.getCollection(ku, kana1, kana2)
-  //   this.setState({
-  //     candidate: res,
-  //   })
-  // }
+    const response = await fetch(url)
+    if (!response.ok) {
+      console.log("Failed to GET Address.")
+      return
+    }
+    const jsonData = await response.json()
+    if (jsonData.size == 0) return
+    const town: string = jsonData.data[0].town
+    const street = jsonData.data[0].streetFullKana
+    const wardID = wardMap[town.substr(3)]
+    const kana1 = street[0]
+    const kana2 = street[1]
+    console.log(jsonData)
+    console.log(wardID, kana1, kana2)
+    const res = await ApiClient.getCollection(wardID, kana1, kana2)
+    this.setState({
+      candidate: res,
+    })
+  }
 
-  // addressChange = async (itemValue: number) => {
-  //   // await ApiClient.postConfigID(itemValue.toString())
-  //   console.log(itemValue)
-  //   this.setState({ collection: itemValue })
-  // }
+  addressChange = async (itemValue: number) => {
+    console.log(itemValue)
+    this.setState({ collection: itemValue })
+    const res = await ApiClient.getCollectionDay(itemValue, this.state.category)
+    this.setState({
+      garbageDays: res.weekday,
+      nthWeeks: res.nth,
+    })
+    this.props.navigation.state.params.changeGarbageDays(res.weekday, res.nth)
+  }
 
-  // changeGarbageDay = async (day: number) => {
-  //   try {
-  //     await AsyncStorage.setItem("day", day.toString())
-  //   } catch (error) {
-  //     Alert.alert("設定の保存に失敗しました。")
-  //   }
-  //   this.setState({
-  //     garbageDay: day,
-  //   })
-  //   this.props.navigation.state.params.changeSetting()
-  // }
+  categoryChange = async (itemValue: number) => {
+    console.log(itemValue)
+    this.setState({ category: itemValue })
+    if (this.state.candidate.length > 0) {
+      const res = await ApiClient.getCollectionDay(
+        this.state.collection,
+        itemValue
+      )
+      this.setState({
+        garbageDays: res.weekday,
+        nthWeeks: res.nth,
+      })
+      this.props.navigation.state.params.changeGarbageDays(res.weekday, res.nth)
+    }
+  }
 
   onPressDayOfWeekList = (day: number) => {
     let garbageDays = this.state.garbageDays.concat()
@@ -103,20 +144,20 @@ export default class SettingGarbageDayScreen extends React.Component<
   }
 
   render() {
-    // let items: JSX.Element[] = []
-    // for (let i = 0; i < this.state.candidate.length; i++) {
-    //   items.push(
-    //     <Picker.Item
-    //       key={i}
-    //       label={this.state.candidate[i].juusho}
-    //       value={this.state.candidate[i].id}
-    //     />
-    //   )
-    // }
+    let jushoOptions: JSX.Element[] = []
+    for (let i = 0; i < this.state.candidate.length; i++) {
+      jushoOptions.push(
+        <Picker.Item
+          key={i}
+          label={this.state.candidate[i].juusho}
+          value={this.state.candidate[i].id}
+        />
+      )
+    }
 
-    let dayOfWeekList: JSX.Element[] = []
+    let dayOfWeekOptions: JSX.Element[] = []
     for (let i = 0; i < 7; i++) {
-      dayOfWeekList.push(
+      dayOfWeekOptions.push(
         <ListItem key={i} onPress={() => this.onPressDayOfWeekList(i)}>
           <Left>
             <Text>{dayOfWeekToString(i)}</Text>
@@ -128,9 +169,9 @@ export default class SettingGarbageDayScreen extends React.Component<
       )
     }
 
-    let nthWeekList: JSX.Element[] = []
+    let nthWeekOptions: JSX.Element[] = []
     for (let i = 0; i < 4; i++) {
-      nthWeekList.push(
+      nthWeekOptions.push(
         <ListItem key={i} onPress={() => this.onPressNthWeekList(i)}>
           <Left>
             <Text>第{i + 1}週</Text>
@@ -147,31 +188,35 @@ export default class SettingGarbageDayScreen extends React.Component<
         <Content>
           <List>
             <Separator bordered>
-              <Text>隔週指定</Text>
-            </Separator>
-            {nthWeekList}
-            <Separator bordered>
-              <Text>曜日指定</Text>
-            </Separator>
-            {dayOfWeekList}
-            <Separator />
-            <Separator style={{ paddingBottom: 20 }}>
               <Text style={{ fontSize: 15 }}>
-                お住いの地域のゴミ捨て日がわからない場合は
-              </Text>
-              <Text style={{ fontSize: 15 }}>
-                郵便番号・住所から取得することも可能です。
+                郵便番号・住所から収集日を設定することが可能です。
               </Text>
             </Separator>
             <ListItem>
               <Body>
-                <Text>郵便番号</Text>
+                <Text>ゴミの種別</Text>
               </Body>
               <Right>
+                <Picker
+                  mode="dropdown"
+                  iosHeader="ゴミの種別"
+                  iosIcon={<Icon name="ios-arrow-down-outline" />}
+                  selectedValue={this.state.category}
+                  onValueChange={itemValue => this.categoryChange(itemValue)}
+                >
+                  {categoryOptions}
+                </Picker>
+              </Right>
+            </ListItem>
+            <ListItem>
+              <Body>
+                <Text>郵便番号</Text>
+              </Body>
+              <Right style={{ flex: 1 }}>
                 <Input
-                  style={{ width: 90 }}
+                  style={{ flex: 1 }}
                   maxLength={7}
-                  // onChangeText={text => this.getAddress(text)}
+                  onChangeText={text => this.getAddress(text)}
                 />
               </Right>
             </ListItem>
@@ -179,18 +224,26 @@ export default class SettingGarbageDayScreen extends React.Component<
               <Body>
                 <Text>町名</Text>
               </Body>
-              <Right>
-                {/* <Picker
+              <Right style={{ flex: 1 }}>
+                <Picker
                   mode="dropdown"
                   iosHeader="住まいの住所"
                   iosIcon={<Icon name="ios-arrow-down-outline" />}
                   selectedValue={this.state.collection}
                   onValueChange={itemValue => this.addressChange(itemValue)}
                 >
-                  {items}
-                </Picker> */}
+                  {jushoOptions}
+                </Picker>
               </Right>
             </ListItem>
+            <Separator bordered>
+              <Text>曜日指定</Text>
+            </Separator>
+            {dayOfWeekOptions}
+            <Separator bordered>
+              <Text>隔週指定</Text>
+            </Separator>
+            {nthWeekOptions}
             <Separator />
           </List>
         </Content>
